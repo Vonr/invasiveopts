@@ -25,12 +25,12 @@ public class Config {
     }
 
     static {
-        defaults = new Object2BooleanOpenHashMap<>();
+        defaults = new Object2BooleanLinkedOpenHashMap<>();
         defaults.put(Keys.BotanyPots.HOPPER_INSERTION, true);
 
         mods = new Object2ObjectOpenHashMap<>();
 
-        options = new Object2BooleanOpenHashMap<>(defaults);
+        options = new Object2BooleanLinkedOpenHashMap<>(defaults);
     }
 
     public static void load(File file) {
