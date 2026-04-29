@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.qther.invasiveopts.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "dev.qther.invasiveopts.mixin.InvasiveMixinPlugin",
+  "mixins": [
+    "botanypots.BotanyPotBlockEntityMixin"
+  ],
+  "server": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
