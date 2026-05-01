@@ -1,5 +1,7 @@
 package dev.qther.invasiveopts.mixin.pipez.stream_abuse;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.maxhenkel.pipez.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.FluidPipeType;
@@ -13,9 +15,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -31,8 +30,8 @@ public abstract class FluidPipeTypeMixin extends PipeTypeMixin<Fluid, FluidData>
     @Shadow
     protected abstract boolean matches(HolderLookup.Provider provider, Filter<?, Fluid> filter, FluidStack stack);
 
-    @Inject(method = "canInsert", at = @At("HEAD"), cancellable = true)
-    public void stopStreamAbuse(HolderLookup.Provider provider, PipeTileEntity.Connection connection, FluidStack stack, List<Filter<?, ?>> filters, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(PipezStreamAbuseHelper.canInsertProto(provider, this::matchesConnection, connection, stack, filters, this::matches));
+    @WrapMethod(method = "canInsert")
+    public boolean stopStreamAbuse(HolderLookup.Provider provider, PipeTileEntity.Connection connection, FluidStack stack, List<Filter<?, ?>> filters, Operation<Boolean> original) {
+        return PipezStreamAbuseHelper.canInsertProto(provider, this::matchesConnection, connection, stack, filters, this::matches);
     }
 }

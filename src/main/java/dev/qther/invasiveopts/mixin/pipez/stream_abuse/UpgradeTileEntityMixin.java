@@ -1,5 +1,7 @@
 package dev.qther.invasiveopts.mixin.pipez.stream_abuse;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
@@ -9,9 +11,6 @@ import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,15 +29,14 @@ public abstract class UpgradeTileEntityMixin extends PipeTileEntityMixin {
     @Shadow
     public abstract UpgradeTileEntity.Distribution getDistribution(Direction side, PipeType pipeType);
 
-    @Inject(method = "getSortedConnections", at = @At("HEAD"), cancellable = true)
-    public void stopStreamAbuse(Direction side, PipeType pipeType, CallbackInfoReturnable<List<PipeTileEntity.Connection>> cir) {
+    @WrapMethod(method = "getSortedConnections")
+    public List<PipeTileEntity.Connection> stopStreamAbuse(Direction side, PipeType pipeType, Operation<List<PipeTileEntity.Connection>> original) {
         UpgradeTileEntity.Distribution distribution = getDistribution(side, pipeType);
 
         ArrayList<PipeTileEntity.Connection> sorted = new ArrayList<>(getConnections());
 
         if (sorted.size() <= 1) {
-            cir.setReturnValue(sorted);
-            return;
+            return sorted;
         }
 
         switch (distribution) {
@@ -47,6 +45,6 @@ public abstract class UpgradeTileEntityMixin extends PipeTileEntityMixin {
             default -> sorted.sort(Comparator.comparingInt(PipeTileEntity.Connection::getDistance));
         }
 
-        cir.setReturnValue(sorted);
+        return sorted;
     }
 }
