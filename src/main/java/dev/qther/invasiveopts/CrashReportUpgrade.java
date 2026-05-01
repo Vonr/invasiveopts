@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CrashReportUpgrade {
     public static void registerCrashLogInfo() {
+        CrashReportCallables.registerHeader(() -> "\n!!! Invasive Optimizations is installed! Check its section for a list of affected mods.\n\n");
+
         CrashReportCallables.registerCrashCallable("Invasive Optimizations", () -> {
             var mods = Config.getAffectedMods().toList();
 
