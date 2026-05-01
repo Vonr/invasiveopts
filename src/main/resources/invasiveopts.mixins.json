@@ -5,7 +5,13 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.qther.invasiveopts.mixin.InvasiveMixinPlugin",
   "mixins": [
-    "botanypots.BotanyPotBlockEntityMixin"
+    "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
+    "pipez.stream_abuse.FluidPipeTypeMixin",
+    "pipez.stream_abuse.GasPipeTypeMixin",
+    "pipez.stream_abuse.ItemPipeTypeMixin",
+    "pipez.stream_abuse.PipeTileEntityMixin",
+    "pipez.stream_abuse.PipeTypeMixin",
+    "pipez.stream_abuse.UpgradeTileEntityMixin"
   ],
   "server": [
   ],

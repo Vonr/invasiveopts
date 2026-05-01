@@ -22,11 +22,16 @@ public class Config {
         public static class BotanyPots {
             public static final String HOPPER_INSERTION = "botanypots.hopper_insertions";
         }
+
+        public static class Pipez {
+            public static final String STREAM_ABUSE = "pipez.stream_abuse";
+        }
     }
 
     static {
         defaults = new Object2BooleanLinkedOpenHashMap<>();
         defaults.put(Keys.BotanyPots.HOPPER_INSERTION, true);
+        defaults.put(Keys.Pipez.STREAM_ABUSE, true);
 
         mods = new Object2ObjectOpenHashMap<>();
 

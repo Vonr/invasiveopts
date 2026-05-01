@@ -1,14 +1,13 @@
-package dev.qther.invasiveopts.mixin.botanypots;
+package dev.qther.invasiveopts.mixin.botanypots.hopper_insertion;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import dev.qther.invasiveopts.Config;
+import dev.qther.invasiveopts.testers.BotanyPotsHopperInsertionTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
-import me.fallenbreath.conditionalmixin.api.mixin.ConditionTester;
 import net.darkhax.bookshelf.common.api.util.TickAccumulator;
 import net.darkhax.botanypots.common.impl.block.entity.BotanyPotBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -27,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Restriction(
         require = {
                 @Condition(value = "botanypots", versionPredicates = "26.1.x"),
-                @Condition(type = Condition.Type.TESTER, tester = BotanyPotBlockEntityMixin.Tester.class)
+                @Condition(type = Condition.Type.TESTER, tester = BotanyPotsHopperInsertionTester.class)
         }
 )
 @Mixin(BotanyPotBlockEntity.class)
@@ -83,10 +82,4 @@ public class BotanyPotBlockEntityMixin {
         }
     }
 
-    public static class Tester implements ConditionTester {
-        @Override
-        public boolean isSatisfied(String mixinClassName) {
-            return Config.get(Config.Keys.BotanyPots.HOPPER_INSERTION);
-        }
-    }
 }

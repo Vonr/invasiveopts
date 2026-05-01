@@ -12,4 +12,6 @@ Most of the optimizations implemented are Merge/Pull Requests that I opened but 
 Current optimizations:
 
 - Botany Pots
-  - Hopper Botany Pot exponential insertion backoff and emptiness tracking (botanypots.hopper\_insertions) [(PR)](https://github.com/Darkhax-Minecraft/BotanyPots/pull/499)
+  - Hopper Botany Pot exponential insertion backoff and emptiness tracking (`botanypots.hopper_insertions`) [(PR)](https://github.com/Darkhax-Minecraft/BotanyPots/pull/499)
+- Pipez
+  - Reduces abuse of Streams in hot paths to reduce allocation rate (`pipez.stream_abuse`) [(PR)](https://github.com/henkelmax/pipez/pull/296)
