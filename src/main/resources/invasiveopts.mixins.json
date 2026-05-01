@@ -4,8 +4,21 @@
   "package": "dev.qther.invasiveopts.mixin",
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.qther.invasiveopts.mixin.InvasiveMixinPlugin",
+  "mixinextras": {
+    "minVersion": "0.5.3"
+  },
   "mixins": [
     "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
+    "pipez.constant_fullness_checks.FluidPipeTypeMixin",
+    "pipez.constant_fullness_checks.GasPipeTypeMixin",
+    "pipez.constant_fullness_checks.ItemPipeTypeMixin",
+    "pipez.early_exits.EnergyPipeTypeMixin",
+    "pipez.early_exits.FluidPipeTypeMixin",
+    "pipez.early_exits.GasPipeTypeMixin",
+    "pipez.early_exits.ItemPipeTypeMixin",
+    "pipez.extract_looped_work.FluidPipeTypeMixin",
+    "pipez.extract_looped_work.GasPipeTypeMixin",
+    "pipez.extract_looped_work.ItemPipeTypeMixin",
     "pipez.stream_abuse.FluidPipeTypeMixin",
     "pipez.stream_abuse.GasPipeTypeMixin",
     "pipez.stream_abuse.ItemPipeTypeMixin",

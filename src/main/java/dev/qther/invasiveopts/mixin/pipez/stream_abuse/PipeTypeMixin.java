@@ -4,7 +4,7 @@ import de.maxhenkel.pipez.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
 import de.maxhenkel.pipez.datacomponents.AbstractPipeTypeData;
-import dev.qther.invasiveopts.testers.PipezStreamAbuseTester;
+import dev.qther.invasiveopts.testers.pipez.PipezStreamAbuseTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import org.spongepowered.asm.mixin.Mixin;

@@ -7,7 +7,7 @@ import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
 import de.maxhenkel.pipez.datacomponents.ItemData;
 import dev.qther.invasiveopts.helpers.PipezStreamAbuseHelper;
-import dev.qther.invasiveopts.testers.PipezStreamAbuseTester;
+import dev.qther.invasiveopts.testers.pipez.PipezStreamAbuseTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.HolderLookup;

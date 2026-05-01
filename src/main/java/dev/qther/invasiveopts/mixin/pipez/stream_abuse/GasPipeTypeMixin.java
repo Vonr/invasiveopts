@@ -7,7 +7,7 @@ import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.GasPipeType;
 import de.maxhenkel.pipez.datacomponents.GasData;
 import dev.qther.invasiveopts.helpers.PipezStreamAbuseHelper;
-import dev.qther.invasiveopts.testers.PipezStreamAbuseTester;
+import dev.qther.invasiveopts.testers.pipez.PipezStreamAbuseTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import mekanism.api.chemical.Chemical;

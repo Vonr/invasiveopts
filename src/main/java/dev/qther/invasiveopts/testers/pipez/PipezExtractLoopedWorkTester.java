@@ -1,11 +1,11 @@
-package dev.qther.invasiveopts.testers;
+package dev.qther.invasiveopts.testers.pipez;
 
 import dev.qther.invasiveopts.Config;
 import me.fallenbreath.conditionalmixin.api.mixin.ConditionTester;
 
-public class BotanyPotsHopperInsertionTester implements ConditionTester {
+public class PipezExtractLoopedWorkTester implements ConditionTester {
     @Override
     public boolean isSatisfied(String mixinClassName) {
-        return Config.get(Config.Keys.BotanyPots.HOPPER_INSERTION);
+        return Config.get(Config.Keys.Pipez.EXTRACT_LOOPED_WORK);
     }
 }

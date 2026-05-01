@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import dev.qther.invasiveopts.testers.BotanyPotsHopperInsertionTester;
+import dev.qther.invasiveopts.testers.botanypots.BotanyPotsHopperInsertionTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.darkhax.bookshelf.common.api.util.TickAccumulator;
