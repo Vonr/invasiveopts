@@ -37,3 +37,23 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "botany-pots"
 curseforge = "botany-pots"
+
+[[dependencies."${mod_id}"]]
+modId="pipez"
+type="optional"
+versionRange="${pipez_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "pipez"
+curseforge = "pipez"
+
+[[dependencies."${mod_id}"]]
+modId="mekanism"
+type="optional"
+versionRange="${mekanism_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "mekanism"
+curseforge = "mekanism"
