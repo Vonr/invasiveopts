@@ -25,7 +25,6 @@ public class Config {
 
         public static class Pipez {
             public static final String CONSTANT_FULLNESS_CHECKS = "pipez.constant_fullness_checks";
-            public static final String EARLY_EXITS = "pipez.early_exits";
             public static final String EXTRACT_LOOPED_WORK = "pipez.extract_looped_work";
             public static final String STREAM_ABUSE = "pipez.stream_abuse";
         }
@@ -37,7 +36,6 @@ public class Config {
         defaults.put(Keys.BotanyPots.HOPPER_INSERTION, true);
 
         defaults.put(Keys.Pipez.CONSTANT_FULLNESS_CHECKS, true);
-        defaults.put(Keys.Pipez.EARLY_EXITS, true);
         defaults.put(Keys.Pipez.EXTRACT_LOOPED_WORK, true);
         defaults.put(Keys.Pipez.STREAM_ABUSE, true);
 
@@ -60,7 +58,7 @@ public class Config {
                     var key = split[0];
 
                     if (!defaults.containsKey(key)) {
-                        InvasiveOpts.LOGGER.error("Ignoring unknown key {}", key);
+                        InvasiveOpts.LOGGER.warn("Ignoring unknown key {}", key);
                         continue;
                     }
 
