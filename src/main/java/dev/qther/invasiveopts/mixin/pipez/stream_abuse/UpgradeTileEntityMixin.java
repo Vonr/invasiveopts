@@ -11,7 +11,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.Direction;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,7 +28,9 @@ import java.util.List;
 @Mixin(UpgradeTileEntity.class)
 public abstract class UpgradeTileEntityMixin extends PipeTileEntityMixin {
     @Unique
-    MutablePair<UpgradeTileEntity.Distribution, List<PipeTileEntity.Connection>> invasiveOpts$sortedConnectionsCache = MutablePair.of(null, null);
+    UpgradeTileEntity.Distribution invasiveOpts$sortedDistributionCache = null;
+    @Unique
+    List<PipeTileEntity.Connection> invasiveOpts$sortedConnectionsCache = null;
 
     @Shadow
     public abstract UpgradeTileEntity.Distribution getDistribution(Direction side, PipeType pipeType);
@@ -38,9 +39,9 @@ public abstract class UpgradeTileEntityMixin extends PipeTileEntityMixin {
     public List<PipeTileEntity.Connection> stopStreamAbuse(Direction side, PipeType pipeType, Operation<List<PipeTileEntity.Connection>> original) {
         UpgradeTileEntity.Distribution distribution = getDistribution(side, pipeType);
 
-        List<PipeTileEntity.Connection> sorted = invasiveOpts$sortedConnectionsCache.right;
+        List<PipeTileEntity.Connection> sorted = invasiveOpts$sortedConnectionsCache;
 
-        if (this.connectionCache == null || invasiveOpts$sortedConnectionsCache.right == null || invasiveOpts$sortedConnectionsCache.left != distribution) {
+        if (this.connectionCache == null || invasiveOpts$sortedConnectionsCache == null || invasiveOpts$sortedDistributionCache != distribution) {
             sorted = new ObjectArrayList<>(getConnections());
             if (sorted.size() > 1) {
                 switch (distribution) {
@@ -50,8 +51,8 @@ public abstract class UpgradeTileEntityMixin extends PipeTileEntityMixin {
                 }
             }
 
-            invasiveOpts$sortedConnectionsCache.left = distribution;
-            invasiveOpts$sortedConnectionsCache.right = sorted;
+            invasiveOpts$sortedDistributionCache = distribution;
+            invasiveOpts$sortedConnectionsCache = sorted;
         } else if (distribution == UpgradeTileEntity.Distribution.RANDOM) {
             Collections.shuffle(sorted);
         }
