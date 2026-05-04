@@ -7,6 +7,7 @@ import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 // https://github.com/henkelmax/pipez/pull/296
@@ -18,6 +19,10 @@ import java.util.List;
 )
 @Mixin(PipeTileEntity.class)
 public abstract class PipeTileEntityMixin {
+    @Shadow
+    @Nullable
+    protected List<PipeTileEntity.Connection> connectionCache;
+
     @Shadow
     public abstract List<PipeTileEntity.Connection> getConnections();
 }
