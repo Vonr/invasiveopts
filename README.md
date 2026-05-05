@@ -15,6 +15,7 @@ Current optimizations:
   - `botanypots.hopper_insertions`: Hopper Botany Pot exponential insertion backoff and emptiness tracking [(PR)](https://github.com/Darkhax-Minecraft/BotanyPots/pull/499)
 - Pipez
   - `pipez.constant_fullness_checks`: Turns connection/inventory fullness into O(1) operations
+  - `pipez.early_exits`: Reduces unnecessary work done by exiting targeted functions early if the right conditions are met
   - `pipez.extract_looped_work`: Move some work out of loops to avoid duplicated work
   - `pipez.stream_abuse`: Reduces abuse of Streams in hot paths to reduce allocation rate [(PR)](https://github.com/henkelmax/pipez/pull/296)
 
