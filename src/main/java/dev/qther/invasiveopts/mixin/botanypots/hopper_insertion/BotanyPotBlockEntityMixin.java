@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import dev.qther.invasiveopts.testers.botanypots.BotanyPotsHopperInsertionTester;
+import dev.qther.invasiveopts.MixinTesters;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.darkhax.bookshelf.common.api.util.TickAccumulator;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Restriction(
         require = {
                 @Condition(value = "botanypots", versionPredicates = "26.1.x"),
-                @Condition(type = Condition.Type.TESTER, tester = BotanyPotsHopperInsertionTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.BotanyPots.BotanyPotsHopperInsertionTester.class)
         }
 )
 @Mixin(BotanyPotBlockEntity.class)

@@ -10,7 +10,7 @@ import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
-import dev.qther.invasiveopts.testers.pipez.PipezExtractLoopedWorkTester;
+import dev.qther.invasiveopts.MixinTesters;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.Direction;
@@ -26,7 +26,7 @@ import java.util.List;
 @Restriction(
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
-                @Condition(type = Condition.Type.TESTER, tester = PipezExtractLoopedWorkTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezExtractLoopedWorkTester.class)
         }
 )
 @Mixin(ItemPipeType.class)

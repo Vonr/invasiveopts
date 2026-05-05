@@ -11,7 +11,7 @@ import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.GasPipeType;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
-import dev.qther.invasiveopts.testers.pipez.PipezExtractLoopedWorkTester;
+import dev.qther.invasiveopts.MixinTesters;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import mekanism.api.chemical.Chemical;
@@ -28,7 +28,7 @@ import java.util.List;
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
                 @Condition(value = "mekanism"),
-                @Condition(type = Condition.Type.TESTER, tester = PipezExtractLoopedWorkTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezExtractLoopedWorkTester.class)
         }
 )
 @Mixin(GasPipeType.class)

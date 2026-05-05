@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import de.maxhenkel.pipez.blocks.tileentity.PipeLogicTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.GasPipeType;
-import dev.qther.invasiveopts.testers.pipez.PipezConstantFullnessChecksTester;
+import dev.qther.invasiveopts.MixinTesters;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import mekanism.api.chemical.IChemicalHandler;
@@ -26,7 +26,7 @@ import java.util.List;
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
                 @Condition(value = "mekanism"),
-                @Condition(type = Condition.Type.TESTER, tester = PipezConstantFullnessChecksTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezConstantFullnessChecksTester.class)
         }
 )
 @Mixin(GasPipeType.class)

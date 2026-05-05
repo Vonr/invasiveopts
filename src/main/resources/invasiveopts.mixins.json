@@ -12,6 +12,7 @@
     "pipez.constant_fullness_checks.FluidPipeTypeMixin",
     "pipez.constant_fullness_checks.GasPipeTypeMixin",
     "pipez.constant_fullness_checks.ItemPipeTypeMixin",
+    "pipez.early_exits.PipeTypeMixin",
     "pipez.extract_looped_work.FluidPipeTypeMixin",
     "pipez.extract_looped_work.GasPipeTypeMixin",
     "pipez.extract_looped_work.ItemPipeTypeMixin",

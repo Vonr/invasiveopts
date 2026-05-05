@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
-import dev.qther.invasiveopts.testers.pipez.PipezStreamAbuseTester;
+import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.util.CachedSort;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
@@ -22,7 +22,7 @@ import java.util.List;
 @Restriction(
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
-                @Condition(type = Condition.Type.TESTER, tester = PipezStreamAbuseTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezStreamAbuseTester.class)
         }
 )
 @Mixin(UpgradeTileEntity.class)

@@ -6,8 +6,8 @@ import de.maxhenkel.pipez.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.types.GasPipeType;
 import de.maxhenkel.pipez.datacomponents.GasData;
+import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.helpers.PipezStreamAbuseHelper;
-import dev.qther.invasiveopts.testers.pipez.PipezStreamAbuseTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import mekanism.api.chemical.Chemical;
@@ -22,7 +22,7 @@ import java.util.List;
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
                 @Condition(value = "mekanism"),
-                @Condition(type = Condition.Type.TESTER, tester = PipezStreamAbuseTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezStreamAbuseTester.class)
         }
 )
 @Mixin(GasPipeType.class)
