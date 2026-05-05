@@ -51,6 +51,10 @@ public class Config {
             try {
                 var lines = Files.readLines(file, Charset.defaultCharset());
                 for (var line : lines) {
+                    if (line.isBlank()) {
+                        continue;
+                    }
+
                     var split = line.split("=", 2);
                     if (split.length != 2) {
                         InvasiveOpts.LOGGER.error("Ignoring malformed option {}", line);
@@ -96,8 +100,20 @@ public class Config {
         try {
             try (var out = new FileWriter(file)) {
                 var iter = Object2BooleanMaps.fastIterator(options);
+                String previousMod = null;
                 while (iter.hasNext()) {
                     var next = iter.next();
+                    var key = next.getKey();
+
+                    var split = key.split("\\.", 2);
+                    var mod = split[0];
+                    if (previousMod == null) {
+                        previousMod = mod;
+                    } else if (!previousMod.equals(mod)) {
+                        out.write('\n');
+                        previousMod = mod;
+                    }
+
                     out.write(next.getKey());
                     out.write('=');
                     out.write(next.getBooleanValue() ? "true\n" : "false\n");
