@@ -34,29 +34,30 @@ public class BotanyPotBlockEntityMixin {
     @Shadow
     protected TickAccumulator exportCooldown;
     @Unique
-    protected int io$exportBackoffStage = 0;
+    protected int invasiveOpts$exportBackoff = 0;
     @Unique
-    protected boolean io$storageMayHaveItems = true;
+    protected boolean invasiveOpts$storageMayHaveItems = true;
 
     @Inject(method = "tickPot", at = @At(value = "HEAD"))
-    private static void initShares(Level level, BlockPos pos, BlockState state, BotanyPotBlockEntity pot, CallbackInfo ci, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining) {
+    private static void initShares(Level level, BlockPos pos, BlockState state, BotanyPotBlockEntity pot, CallbackInfo ci, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining, @Share("didWork") LocalBooleanRef didWork) {
         nonEmptyRemaining.set(true);
+        didWork.set(false);
     }
 
     @Inject(method = "tickPot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;gameEvent(Lnet/minecraft/core/Holder;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/gameevent/GameEvent$Context;)V", ordinal = 0))
     private static void setMayHaveItems(Level level, BlockPos pos, BlockState state, BotanyPotBlockEntity pot, CallbackInfo ci) {
-        ((BotanyPotBlockEntityMixin) (Object) pot).io$storageMayHaveItems = true;
+        ((BotanyPotBlockEntityMixin) (Object) pot).invasiveOpts$storageMayHaveItems = true;
     }
 
     @WrapOperation(method = "tickPot", at = @At(value = "INVOKE", target = "Lnet/darkhax/botanypots/common/impl/block/entity/BotanyPotBlockEntity;isHopper()Z", ordinal = 1))
     private static boolean checkMayHaveItems(BotanyPotBlockEntity instance, Operation<Boolean> original) {
-        return ((BotanyPotBlockEntityMixin) (Object) instance).io$storageMayHaveItems && original.call(instance);
+        return ((BotanyPotBlockEntityMixin) (Object) instance).invasiveOpts$storageMayHaveItems && original.call(instance);
     }
 
     @WrapOperation(method = "tickPot", at = @At(value = "INVOKE", target = "Lnet/darkhax/botanypots/common/impl/block/entity/BotanyPotBlockEntity;setItem(ILnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
-    private static void onInsert(BotanyPotBlockEntity instance, int i, ItemStack result, Operation<Void> original, @Local(name = "stack") ItemStack stack, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining) {
+    private static void onInsert(BotanyPotBlockEntity instance, int i, ItemStack result, Operation<Void> original, @Local(name = "stack") ItemStack stack, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining, @Share("didWork") LocalBooleanRef didWork) {
         if (stack.getCount() != result.getCount()) {
-            ((BotanyPotBlockEntityMixin) (Object) instance).io$exportBackoffStage = 0;
+            didWork.set(true);
         }
 
         if (!stack.isEmpty()) {
@@ -67,18 +68,20 @@ public class BotanyPotBlockEntityMixin {
     }
 
     @Inject(method = "tickPot", at = @At(value = "INVOKE", target = "Lnet/darkhax/bookshelf/common/api/util/TickAccumulator;reset()V", ordinal = 1), cancellable = true)
-    private static void updateState(Level level, BlockPos pos, BlockState state, BotanyPotBlockEntity pot, CallbackInfo ci, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining) {
+    private static void updateState(Level level, BlockPos pos, BlockState state, BotanyPotBlockEntity pot, CallbackInfo ci, @Share("nonEmptyRemaining") LocalBooleanRef nonEmptyRemaining, @Share("didWork") LocalBooleanRef didWork) {
         if (level instanceof ServerLevel) {
             ci.cancel();
 
             var mixin = ((BotanyPotBlockEntityMixin) (Object) pot);
-            if (mixin != null) {
-                mixin.io$storageMayHaveItems = nonEmptyRemaining.get();
+            mixin.invasiveOpts$storageMayHaveItems = nonEmptyRemaining.get();
 
-                if (mixin.io$exportBackoffStage++ > 0) {
-                    mixin.exportCooldown.setTicks(1 << Math.min(7, mixin.io$exportBackoffStage));
-                }
+            if (mixin.invasiveOpts$storageMayHaveItems && didWork.get()) {
+                mixin.invasiveOpts$exportBackoff = Math.max(0, mixin.invasiveOpts$exportBackoff >> 1);
+            } else {
+                mixin.invasiveOpts$exportBackoff = Math.min(128, mixin.invasiveOpts$exportBackoff == 0 ? 1 : mixin.invasiveOpts$exportBackoff << 1);
             }
+
+            mixin.exportCooldown.setTicks(mixin.invasiveOpts$exportBackoff);
         }
     }
 
