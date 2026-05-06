@@ -63,7 +63,7 @@ public class CachedSort {
      * Sorts {@code list} in-place in ascending order according to the value obtaining by transforming each element into a {@link short} via {@code transform}.
      * Reverse the sort by using bitwise-not (~) on the result of {@code transform}.
      *
-     * @param list The list to sort. Must not exceed 65536 elements.
+     * @param list The list to sort
      * @param transform An {@link short} transform function applied to each element in {@code list}
      * @param <T> The type of the elements in {@code list}
      */
@@ -81,7 +81,8 @@ public class CachedSort {
         }
 
         if (size > 65536) {
-            throw new IllegalArgumentException("`list` had more than 65536 elements");
+            sortByCachedIntKey(list, transform::applyAsShort);
+            return;
         }
 
         int[] indices = new int[size];
