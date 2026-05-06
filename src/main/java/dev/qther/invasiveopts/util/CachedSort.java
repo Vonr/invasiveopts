@@ -86,7 +86,7 @@ public class CachedSort {
 
         int[] indices = new int[size];
         for (int i = 0; i < size; i++) {
-            indices[i] = ((int) transform.applyAsShort(list.get(i)) << 16L) | i;
+            indices[i] = ((int) transform.applyAsShort(list.get(i)) << 16) | i;
         }
 
         Arrays.sort(indices);
