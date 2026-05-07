@@ -40,5 +40,12 @@ public class MixinTesters {
                 return Config.get(Config.Keys.Pipez.STREAM_ABUSE);
             }
         }
+
+        public static class PipezNbtComparisonsTester implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.get(Config.Keys.Pipez.NBT_COMPARISONS);
+            }
+        }
     }
 }

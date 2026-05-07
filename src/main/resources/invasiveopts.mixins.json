@@ -17,6 +17,8 @@
     "pipez.extract_looped_work.FluidPipeTypeMixin",
     "pipez.extract_looped_work.GasPipeTypeMixin",
     "pipez.extract_looped_work.ItemPipeTypeMixin",
+    "pipez.nbt_comparisons.FilterMixin",
+    "pipez.nbt_comparisons.ItemPipeTypeMixin",
     "pipez.stream_abuse.FluidPipeTypeMixin",
     "pipez.stream_abuse.GasPipeTypeMixin",
     "pipez.stream_abuse.ItemPipeTypeMixin",
