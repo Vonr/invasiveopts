@@ -3,7 +3,7 @@ package dev.qther.invasiveopts.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 
 public class CachedSort {
     private static final long LONG_LOWER_HALF = 0xFFFF_FFFFL;
@@ -13,11 +13,12 @@ public class CachedSort {
 
     /**
      * Sorts {@code list} in-place in ascending order according to the value obtaining by transforming each element into an {@link int} via {@code transform}.
-     * Reverse the sort by using bitwise-not (~) on the result of {@code transform}.
+     * <p>
+     * Sort in descending order by using bitwise-not (~) on the result of {@code transform}.
      *
-     * @param list The list to sort
+     * @param list      The list to sort
      * @param transform An {@link int} transform function applied to each element in {@code list}
-     * @param <T> The type of the elements in {@code list}
+     * @param <T>       The type of the elements in {@code list}
      */
     public static <T> void sortByCachedIntKey(List<T> list, ToIntFunction<T> transform) {
         var size = list.size();
@@ -61,11 +62,12 @@ public class CachedSort {
 
     /**
      * Sorts {@code list} in-place in ascending order according to the value obtaining by transforming each element into a {@link short} via {@code transform}.
-     * Reverse the sort by using bitwise-not (~) on the result of {@code transform}.
+     * <p>
+     *  Sort in descending order by using bitwise-not (~) on the result of {@code transform}.
      *
-     * @param list The list to sort
-     * @param transform An {@link short} transform function applied to each element in {@code list}
-     * @param <T> The type of the elements in {@code list}
+     * @param list      The list to sort
+     * @param transform A {@link short} transform function applied to each element in {@code list}
+     * @param <T>       The type of the elements in {@code list}
      */
     public static <T> void sortByCachedShortKey(List<T> list, ToShortFunction<T> transform) {
         var size = list.size();
@@ -97,6 +99,163 @@ public class CachedSort {
                 index = indices[index] & INT_LOWER_HALF;
             }
             indices[i] = (indices[i] & INT_UPPER_HALF) | index;
+            Collections.swap(list, i, index);
+        }
+    }
+
+    /**
+     * Sorts {@code list} in-place in ascending order according to the value obtaining by transforming each element into a {@link Comparable} via {@code transform}.
+     *
+     * @param list      The list to sort
+     * @param transform A transform function applied to each element in {@code list}
+     * @param <T>       The type of the elements in {@code list}
+     */
+    public static <T, U extends Comparable<U>> void sortByCachedKey(List<T> list, Function<T, U> transform) {
+        var size = list.size();
+        if (size <= 1) {
+            return;
+        }
+
+        if (size == 2) {
+            if (transform.apply(list.get(0)).compareTo(transform.apply(list.get(1))) > 0) {
+                Collections.swap(list, 0, 1);
+            }
+            return;
+        }
+
+        final class Pair implements Comparable<Pair> {
+            private final U key;
+            private int index;
+
+            Pair(U key, int index) {
+                this.key = key;
+                this.index = index;
+            }
+
+            @Override
+            public int compareTo(Pair o) {
+                return this.key.compareTo(o.key);
+            }
+        }
+
+        Pair[] indices = new Pair[size];
+        for (int i = 0; i < size; i++) {
+            indices[i] = new Pair(transform.apply(list.get(i)), i);
+        }
+
+        Arrays.sort(indices);
+        for (int i = 0; i < size; i++) {
+            int index = indices[i].index;
+            while (index < i) {
+                index = indices[index].index;
+            }
+            indices[i].index = index;
+            Collections.swap(list, i, index);
+        }
+    }
+
+    /**
+     * Sorts {@code list} in-place in descending order according to the value obtaining by transforming each element into a {@link Comparable} via {@code transform}.
+     *
+     * @param list      The list to sort
+     * @param transform A transform function applied to each element in {@code list}
+     * @param <T>       The type of the elements in {@code list}
+     */
+    public static <T, U extends Comparable<U>> void sortByCachedKeyDescending(List<T> list, Function<T, U> transform) {
+        var size = list.size();
+        if (size <= 1) {
+            return;
+        }
+
+        if (size == 2) {
+            if (-transform.apply(list.get(0)).compareTo(transform.apply(list.get(1))) > 0) {
+                Collections.swap(list, 0, 1);
+            }
+            return;
+        }
+
+        final class Pair implements Comparable<Pair> {
+            private final U key;
+            private int index;
+
+            Pair(U key, int index) {
+                this.key = key;
+                this.index = index;
+            }
+
+            @Override
+            public int compareTo(Pair o) {
+                return -this.key.compareTo(o.key);
+            }
+        }
+
+        Pair[] indices = new Pair[size];
+        for (int i = 0; i < size; i++) {
+            indices[i] = new Pair(transform.apply(list.get(i)), i);
+        }
+
+        Arrays.sort(indices);
+        for (int i = 0; i < size; i++) {
+            int index = indices[i].index;
+            while (index < i) {
+                index = indices[index].index;
+            }
+            indices[i].index = index;
+            Collections.swap(list, i, index);
+        }
+    }
+
+    /**
+     * Sorts {@code list} in-place in ascending order according to the value obtaining by transforming each element into a different type via {@code transform}
+     * then comparing them using {@code comparator}.
+     * <p>
+     * Sort in descending order by reversing the output of {@code comparator}
+     *
+     * @param list       The list to sort
+     * @param transform  A transform function applied to each element in {@code list}
+     * @param comparator A function following the contract of {@link Comparable#compareTo(Object)}.
+     * @param <T>        The type of the elements in {@code list}
+     */
+    public static <T, U> void sortByCachedKey(List<T> list, Function<T, U> transform, ToIntBiFunction<U, U> comparator) {
+        var size = list.size();
+        if (size <= 1) {
+            return;
+        }
+
+        if (size == 2) {
+            if (comparator.applyAsInt(transform.apply(list.get(0)), transform.apply(list.get(1))) > 0) {
+                Collections.swap(list, 0, 1);
+            }
+            return;
+        }
+
+        final class Pair implements Comparable<Pair> {
+            private final U key;
+            private int index;
+
+            Pair(U key, int index) {
+                this.key = key;
+                this.index = index;
+            }
+
+            @Override
+            public int compareTo(Pair o) {
+                return comparator.applyAsInt(this.key, o.key);
+            }
+        }
+
+        Pair[] indices = new Pair[size];
+        for (int i = 0; i < size; i++) {
+            indices[i] = new Pair(transform.apply(list.get(i)), i);
+        }
+
+        Arrays.sort(indices);
+        for (int i = 0; i < size; i++) {
+            int index = indices[i].index;
+            while (index < i) {
+                index = indices[index].index;
+            }
+            indices[i].index = index;
             Collections.swap(list, i, index);
         }
     }
