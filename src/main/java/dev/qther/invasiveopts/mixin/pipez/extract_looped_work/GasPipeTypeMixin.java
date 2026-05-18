@@ -28,7 +28,7 @@ import java.util.List;
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
                 @Condition(value = "mekanism"),
-                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezExtractLoopedWorkTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.ExtractLoopedWork.class)
         }
 )
 @Mixin(GasPipeType.class)

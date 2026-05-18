@@ -83,6 +83,10 @@ dependencies {
     compileOnly "mekanism:Mekanism:${project.mekanism_version}:api"
 
     implementation "curse.maven:pipez-443900:${project.pipez_version}"
+
+    implementation "curse.maven:xycraft-653786:${project.xycraft_core_version}"
+    implementation "curse.maven:xycraft-world-653789:${project.xycraft_world_version}"
+    implementation "curse.maven:xycraft-machines-653791:${project.xycraft_machines_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

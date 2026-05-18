@@ -25,7 +25,7 @@ import java.util.List;
 @Restriction(
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
-                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezConstantFullnessChecksTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.ConstantFullnessChecks.class)
         }
 )
 @Mixin(FluidPipeType.class)

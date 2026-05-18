@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Restriction(
         require = {
                 @Condition(value = "botanypots", versionPredicates = "26.1.x"),
-                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.BotanyPots.BotanyPotsHopperInsertionTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.BotanyPots.HopperInsertions.class)
         }
 )
 @Mixin(BotanyPotBlockEntity.class)

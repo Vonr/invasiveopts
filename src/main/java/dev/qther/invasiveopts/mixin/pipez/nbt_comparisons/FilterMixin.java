@@ -25,7 +25,7 @@ import java.util.UUID;
 @Restriction(
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
-                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezNbtComparisonsTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.NbtComparisons.class)
         }
 )
 @Mixin(Filter.class)

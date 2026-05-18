@@ -14,38 +14,67 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class Config {
-    private static final Object2BooleanMap<String> defaults;
-    private static final Object2BooleanMap<String> options;
-    private static final Object2ObjectMap<String, List<String>> mods;
+    private static final Object2ObjectOpenHashMap<String, Key> keysById = new Object2ObjectOpenHashMap<>();
+    private static final Object2BooleanMap<Key> defaults = new Object2BooleanLinkedOpenHashMap<>();
+    private static final Object2BooleanMap<Key> options = new Object2BooleanLinkedOpenHashMap<>();
+    private static final Object2ObjectMap<String, List<String>> mods = new Object2ObjectOpenHashMap<>();
 
     public static class Keys {
         public static class BotanyPots {
-            public static final String HOPPER_INSERTION = "botanypots.hopper_insertions";
+            public static final Key HOPPER_INSERTIONS = key("botanypots.hopper_insertions");
         }
 
         public static class Pipez {
-            public static final String CONSTANT_FULLNESS_CHECKS = "pipez.constant_fullness_checks";
-            public static final String EARLY_EXITS = "pipez.early_exits";
-            public static final String EXTRACT_LOOPED_WORK = "pipez.extract_looped_work";
-            public static final String NBT_COMPARISONS = "pipez.nbt_comparisons";
-            public static final String STREAM_ABUSE = "pipez.stream_abuse";
+            public static final Key CONSTANT_FULLNESS_CHECKS = key("pipez.constant_fullness_checks");
+            public static final Key EARLY_EXITS = key("pipez.early_exits");
+            public static final Key EXTRACT_LOOPED_WORK = key("pipez.extract_looped_work");
+            public static final Key NBT_COMPARISONS = key("pipez.nbt_comparisons");
+            public static final Key STREAM_ABUSE = key("pipez.stream_abuse");
+        }
+
+        public static class XycraftMachines {
+            public static final Key UNNECESSARY_RESORTING = key("xycraft_machines.unnecessary_resorting");
+            public static final Key REDSTONE_CHECKS = key("xycraft_machines.redstone_checks");
+        }
+
+        private static Key key(String id, boolean enabled) {
+            var key = new Key(id, enabled);
+            keysById.put(id, key);
+            return key;
+        }
+
+        private static Key key(String id) {
+            return key(id, true);
+        }
+    }
+
+    public static final class Key {
+        private final String id;
+        public boolean enabled;
+
+        public Key(String id, boolean enabled) {
+            this.id = id;
+            this.enabled = enabled;
+        }
+
+        private void putDefault() {
+            defaults.put(this, this.enabled);
         }
     }
 
     static {
-        defaults = new Object2BooleanLinkedOpenHashMap<>();
+        Keys.BotanyPots.HOPPER_INSERTIONS.putDefault();
 
-        defaults.put(Keys.BotanyPots.HOPPER_INSERTION, true);
+        Keys.Pipez.CONSTANT_FULLNESS_CHECKS.putDefault();
+        Keys.Pipez.EARLY_EXITS.putDefault();
+        Keys.Pipez.EXTRACT_LOOPED_WORK.putDefault();
+        Keys.Pipez.NBT_COMPARISONS.putDefault();
+        Keys.Pipez.STREAM_ABUSE.putDefault();
 
-        defaults.put(Keys.Pipez.CONSTANT_FULLNESS_CHECKS, true);
-        defaults.put(Keys.Pipez.EARLY_EXITS, true);
-        defaults.put(Keys.Pipez.EXTRACT_LOOPED_WORK, true);
-        defaults.put(Keys.Pipez.NBT_COMPARISONS, true);
-        defaults.put(Keys.Pipez.STREAM_ABUSE, true);
+        Keys.XycraftMachines.REDSTONE_CHECKS.putDefault();
+        Keys.XycraftMachines.UNNECESSARY_RESORTING.putDefault();
 
-        mods = new Object2ObjectOpenHashMap<>();
-
-        options = new Object2BooleanLinkedOpenHashMap<>(defaults);
+        options.putAll(defaults);
     }
 
     public static void load(File file) {
@@ -63,10 +92,11 @@ public class Config {
                         continue;
                     }
 
-                    var key = split[0];
+                    var id = split[0];
+                    var key = keysById.get(id);
 
-                    if (!defaults.containsKey(key)) {
-                        InvasiveOpts.LOGGER.warn("Ignoring unknown key {}", key);
+                    if (key == null) {
+                        InvasiveOpts.LOGGER.warn("Ignoring unknown key {}", id);
                         continue;
                     }
 
@@ -75,7 +105,7 @@ public class Config {
                     if (value.equals("true")) {
                         options.put(key, true);
 
-                        var modSplit = key.split("\\.", 2);
+                        var modSplit = id.split("\\.", 2);
                         if (modSplit.length != 2) {
                             InvasiveOpts.LOGGER.error("Ignoring malformed option key {}", key);
                             continue;
@@ -107,7 +137,7 @@ public class Config {
                     var next = iter.next();
                     var key = next.getKey();
 
-                    var split = key.split("\\.", 2);
+                    var split = key.id.split("\\.", 2);
                     var mod = split[0];
                     if (previousMod == null) {
                         previousMod = mod;
@@ -116,7 +146,7 @@ public class Config {
                         previousMod = mod;
                     }
 
-                    out.write(next.getKey());
+                    out.write(next.getKey().id);
                     out.write('=');
                     out.write(next.getBooleanValue() ? "true\n" : "false\n");
                 }

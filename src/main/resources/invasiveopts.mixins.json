@@ -24,7 +24,12 @@
     "pipez.stream_abuse.ItemPipeTypeMixin",
     "pipez.stream_abuse.PipeTileEntityMixin",
     "pipez.stream_abuse.PipeTypeMixin",
-    "pipez.stream_abuse.UpgradeTileEntityMixin"
+    "pipez.stream_abuse.UpgradeTileEntityMixin",
+    "xycraft_machines.redstone_checks.BlockBehaviourMixin",
+    "xycraft_machines.redstone_checks.ExtractorBlockEntityMixin",
+    "xycraft_machines.redstone_checks.ExtractorBlockMixin",
+    "xycraft_machines.redstone_checks.ExtractorTickSystemMixin",
+    "xycraft_machines.unnecessary_resorting.ExtractorTickSystemMixin"
   ],
   "server": [
   ],

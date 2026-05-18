@@ -22,7 +22,7 @@ import java.util.List;
 @Restriction(
         require = {
                 @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
-                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.PipezStreamAbuseTester.class)
+                @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.StreamAbuse.class)
         }
 )
 @Mixin(UpgradeTileEntity.class)

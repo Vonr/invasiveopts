@@ -4,47 +4,63 @@ import me.fallenbreath.conditionalmixin.api.mixin.ConditionTester;
 
 public class MixinTesters {
     public static class BotanyPots {
-        public static class BotanyPotsHopperInsertionTester implements ConditionTester {
+        public static class HopperInsertions implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.BotanyPots.HOPPER_INSERTION);
+                return Config.Keys.BotanyPots.HOPPER_INSERTIONS.enabled;
             }
         }
     }
 
     public static class Pipez {
-        public static class PipezConstantFullnessChecksTester implements ConditionTester {
+        public static class ConstantFullnessChecks implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.Pipez.CONSTANT_FULLNESS_CHECKS);
+                return Config.Keys.Pipez.CONSTANT_FULLNESS_CHECKS.enabled;
             }
         }
 
-        public static class PipezEarlyExitsTester implements ConditionTester {
+        public static class EarlyExits implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.Pipez.EARLY_EXITS);
+                return Config.Keys.Pipez.EARLY_EXITS.enabled;
             }
         }
 
-        public static class PipezExtractLoopedWorkTester implements ConditionTester {
+        public static class ExtractLoopedWork implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.Pipez.EXTRACT_LOOPED_WORK);
+                return Config.Keys.Pipez.EXTRACT_LOOPED_WORK.enabled;
             }
         }
 
-        public static class PipezStreamAbuseTester implements ConditionTester {
+        public static class StreamAbuse implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.Pipez.STREAM_ABUSE);
+                return Config.Keys.Pipez.STREAM_ABUSE.enabled;
             }
         }
 
-        public static class PipezNbtComparisonsTester implements ConditionTester {
+        public static class NbtComparisons implements ConditionTester {
             @Override
             public boolean isSatisfied(String mixinClassName) {
-                return Config.get(Config.Keys.Pipez.NBT_COMPARISONS);
+                return Config.Keys.Pipez.NBT_COMPARISONS.enabled;
+            }
+        }
+    }
+
+    public static class XycraftMachines {
+        public static class UnnecessarySorting implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.XycraftMachines.UNNECESSARY_RESORTING.enabled;
+            }
+        }
+
+        public static class RedstoneChecks implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.XycraftMachines.REDSTONE_CHECKS.enabled;
             }
         }
     }
