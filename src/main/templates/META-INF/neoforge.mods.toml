@@ -57,3 +57,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "mekanism"
 curseforge = "mekanism"
+
+[[dependencies."${mod_id}"]]
+modId="xycraft_machines"
+type="optional"
+versionRange="${xycraft_machines_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+# modrinth = "xycraft-machines"
+curseforge = "xycraft-machines"
