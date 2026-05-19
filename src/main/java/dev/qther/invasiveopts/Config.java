@@ -156,10 +156,6 @@ public class Config {
         }
     }
 
-    public static boolean get(String key) {
-        return options.getOrDefault(key, false);
-    }
-
     public static Stream<Map.Entry<String, List<String>>> getAffectedMods() {
         var modList = ModList.get();
         return mods.entrySet().stream().filter(e -> modList.isLoaded(e.getKey()));
