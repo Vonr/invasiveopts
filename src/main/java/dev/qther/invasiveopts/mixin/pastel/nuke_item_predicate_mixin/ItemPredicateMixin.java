@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ItemPredicateMixin {
     @TargetHandler(mixin = "earth.terrarium.pastel.mixin.ItemPredicateMixin", name = "redirectShearsPredicates")
     @Inject(method = "@MixinSquared:Handler", at = @At(value = "HEAD"), cancellable = true)
-    private void reduceLogLevel(boolean original, CallbackInfoReturnable<Boolean> ci) {
+    private void noop(boolean original, CallbackInfoReturnable<Boolean> ci) {
         ci.setReturnValue(original);
     }
 }
