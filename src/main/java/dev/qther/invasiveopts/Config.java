@@ -78,6 +78,8 @@ public class Config {
         Keys.XycraftMachines.REDSTONE_CHECKS.putDefault();
         Keys.XycraftMachines.UNNECESSARY_RESORTING.putDefault();
 
+        Keys.Pastel.NUKE_ITEM_PREDICATE_MIXIN.putDefault();
+
         options.putAll(defaults);
     }
 
