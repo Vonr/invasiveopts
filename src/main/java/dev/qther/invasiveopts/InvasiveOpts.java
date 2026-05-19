@@ -3,6 +3,7 @@ package dev.qther.invasiveopts;
 import dev.qther.invasiveopts.helpers.XycraftMachinesEvents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
@@ -15,7 +16,8 @@ public class InvasiveOpts {
 
     public InvasiveOpts(IEventBus modEventBus, ModContainer modContainer) {
         var bus = NeoForge.EVENT_BUS;
-        if (Config.Keys.XycraftMachines.UNNECESSARY_RESORTING.enabled) {
+        var mods = ModList.get();
+        if (mods.isLoaded("xycraft_machines") && Config.Keys.XycraftMachines.UNNECESSARY_RESORTING.enabled) {
             XycraftMachinesEvents.registerAll(bus);
         }
     }
