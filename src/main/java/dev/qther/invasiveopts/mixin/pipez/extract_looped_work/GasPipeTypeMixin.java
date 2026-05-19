@@ -26,7 +26,7 @@ import java.util.List;
 
 @Restriction(
         require = {
-                @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
+                @Condition(value = "pipez"),
                 @Condition(value = "mekanism"),
                 @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.ExtractLoopedWork.class)
         }

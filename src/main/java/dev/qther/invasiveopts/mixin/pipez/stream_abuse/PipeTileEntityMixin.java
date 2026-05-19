@@ -13,7 +13,7 @@ import java.util.List;
 // https://github.com/henkelmax/pipez/pull/296
 @Restriction(
         require = {
-                @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
+                @Condition(value = "pipez"),
                 @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.StreamAbuse.class)
         }
 )

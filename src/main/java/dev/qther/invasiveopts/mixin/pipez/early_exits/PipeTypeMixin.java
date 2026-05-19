@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Restriction(
         require = {
-                @Condition(value = "pipez", versionPredicates = "<=1.2.19"),
+                @Condition(value = "pipez"),
                 @Condition(type = Condition.Type.TESTER, tester = MixinTesters.Pipez.EarlyExits.class)
         }
 )
