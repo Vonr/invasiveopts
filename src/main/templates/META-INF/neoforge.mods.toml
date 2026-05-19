@@ -67,3 +67,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 # modrinth = "xycraft-machines"
 curseforge = "xycraft-machines"
+
+[[dependencies."${mod_id}"]]
+modId="pastel"
+type="optional"
+versionRange="${pastel_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "pastel-mod"
+curseforge = "pastel"
