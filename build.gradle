@@ -20,6 +20,17 @@ repositories {
         }
     }
 
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://maven.bawnorton.com/releases"
+            }
+        }
+        filter {
+            includeGroup "com.github.bawnorton.mixinsquared"
+        }
+    }
+
     maven { url 'https://modmaven.dev/' }
 
     maven { url 'https://maven.fallenbreath.me/releases' }
@@ -75,7 +86,22 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-    implementation(jarJar("me.fallenbreath:conditional-mixin-neoforge:${project.conditional_mixin_version}"))
+    //noinspection DependencyNotationArgument
+    jarJar(implementation(group:"me.fallenbreath", name:"conditional-mixin-neoforge")) {
+        version {
+            prefer "${project.conditional_mixin_version}"
+            strictly "[${project.conditional_mixin_version},)"
+        }
+    }
+
+    compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${project.mixin_squared_version}"))
+    //noinspection DependencyNotationArgument
+    jarJar(implementation(group: "com.github.bawnorton.mixinsquared", name:"mixinsquared-neoforge")) {
+        version {
+            prefer "${project.mixin_squared_version}"
+            strictly "[${project.mixin_squared_version},)"
+        }
+    }
 
     implementation "net.darkhax.botanypots:botanypots-neoforge-1.21.1:${project.botanypots_version}"
     implementation "net.darkhax.bookshelf:bookshelf-neoforge-1.21.1:${project.bookshelf_version}"
