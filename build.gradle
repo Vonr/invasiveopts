@@ -23,6 +23,18 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+    exclusiveContent {
+        forRepository {
+            maven {
                 url "https://maven.bawnorton.com/releases"
             }
         }
@@ -108,11 +120,14 @@ dependencies {
 
     compileOnly "mekanism:Mekanism:${project.mekanism_version}:api"
 
-    implementation "curse.maven:pipez-443900:${project.pipez_version}"
+    implementation "maven.modrinth:pipez:${project.pipez_version}"
 
     implementation "curse.maven:xycraft-653786:${project.xycraft_core_version}"
     implementation "curse.maven:xycraft-world-653789:${project.xycraft_world_version}"
     implementation "curse.maven:xycraft-machines-653791:${project.xycraft_machines_version}"
+
+    // too many dependencies to bother adding for `implementation`
+    compileOnly "maven.modrinth:pastel-mod:${project.pastel_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

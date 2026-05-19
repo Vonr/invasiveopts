@@ -37,6 +37,10 @@ public class Config {
             public static final Key REDSTONE_CHECKS = key("xycraft_machines.redstone_checks");
         }
 
+        public static class Pastel {
+            public static final Key NUKE_ITEM_PREDICATE_MIXIN = key("pastel.nuke_item_predicate_mixin");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);
