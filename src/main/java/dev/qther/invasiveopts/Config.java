@@ -3,6 +3,7 @@ package dev.qther.invasiveopts;
 import com.google.common.io.Files;
 import it.unimi.dsi.fastutil.objects.*;
 import net.neoforged.fml.ModList;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,8 +16,7 @@ import java.util.stream.Stream;
 
 public class Config {
     private static final Object2ObjectOpenHashMap<String, Key> keysById = new Object2ObjectOpenHashMap<>();
-    private static final Object2BooleanMap<Key> defaults = new Object2BooleanLinkedOpenHashMap<>();
-    private static final Object2BooleanMap<Key> options = new Object2BooleanLinkedOpenHashMap<>();
+    private static final Object2BooleanMap<Key> options = new Object2BooleanAVLTreeMap<>();
     private static final Object2ObjectMap<String, List<String>> mods = new Object2ObjectOpenHashMap<>();
 
     public static class Keys {
@@ -52,7 +52,7 @@ public class Config {
         }
     }
 
-    public static final class Key {
+    public static final class Key implements Comparable<Key> {
         private final String id;
         public boolean enabled;
 
@@ -61,26 +61,25 @@ public class Config {
             this.enabled = enabled;
         }
 
-        private void putDefault() {
-            defaults.put(this, this.enabled);
+        @Override
+        public int compareTo(@NotNull Config.Key o) {
+            return this.id.compareTo(o.id);
         }
     }
 
     static {
-        Keys.BotanyPots.HOPPER_INSERTIONS.putDefault();
-
-        Keys.Pipez.CONSTANT_FULLNESS_CHECKS.putDefault();
-        Keys.Pipez.EARLY_EXITS.putDefault();
-        Keys.Pipez.EXTRACT_LOOPED_WORK.putDefault();
-        Keys.Pipez.NBT_COMPARISONS.putDefault();
-        Keys.Pipez.STREAM_ABUSE.putDefault();
-
-        Keys.XycraftMachines.REDSTONE_CHECKS.putDefault();
-        Keys.XycraftMachines.UNNECESSARY_RESORTING.putDefault();
-
-        Keys.Pastel.NUKE_ITEM_PREDICATE_MIXIN.putDefault();
-
-        options.putAll(defaults);
+        try {
+            for (var member : Keys.class.getNestMembers()) {
+                for (var field : member.getDeclaredFields()) {
+                    if (Key.class.isAssignableFrom(field.getType())) {
+                        var key = (Key) field.get(null);
+                        options.put(key, key.enabled);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void load(File file) {
