@@ -73,4 +73,13 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class Create {
+        public static class FailFastClipboardMigration implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Create.FAIL_FAST_CLIPBOARD_MIGRATION.enabled;
+            }
+        }
+    }
 }

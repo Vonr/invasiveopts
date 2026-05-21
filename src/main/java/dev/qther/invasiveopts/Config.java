@@ -41,6 +41,10 @@ public class Config {
             public static final Key NUKE_ITEM_PREDICATE_MIXIN = key("pastel.nuke_item_predicate_mixin");
         }
 
+        public static class Create {
+            public static final Key FAIL_FAST_CLIPBOARD_MIGRATION = key("create.fail_fast_clipboard_migration");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);
