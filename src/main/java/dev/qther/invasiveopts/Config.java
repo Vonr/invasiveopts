@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class Config {
     private static final Object2ObjectOpenHashMap<String, Key> keysById = new Object2ObjectOpenHashMap<>();
-    private static final Object2BooleanMap<Key> options = new Object2BooleanAVLTreeMap<>();
+    private static final ObjectSet<Key> options = new ObjectAVLTreeSet<>();
     private static final Object2ObjectMap<String, List<String>> mods = new Object2ObjectOpenHashMap<>();
 
     public static class Keys {
@@ -73,7 +73,7 @@ public class Config {
                 for (var field : member.getDeclaredFields()) {
                     if (Key.class.isAssignableFrom(field.getType())) {
                         var key = (Key) field.get(null);
-                        options.put(key, key.enabled);
+                        options.add(key);
                     }
                 }
             }
@@ -108,7 +108,8 @@ public class Config {
                     var value = split[1];
 
                     if (value.equals("true")) {
-                        options.put(key, true);
+                        key.enabled = true;
+                        options.add(key);
 
                         var modSplit = id.split("\\.", 2);
                         if (modSplit.length != 2) {
@@ -124,7 +125,8 @@ public class Config {
                             return v;
                         });
                     } else if (value.equals("false")) {
-                        options.put(key, false);
+                        key.enabled = false;
+                        options.add(key);
                     } else {
                         InvasiveOpts.LOGGER.error("Expecting boolean value for {} but got {}", key, value);
                     }
@@ -136,11 +138,10 @@ public class Config {
 
         try {
             try (var out = new FileWriter(file)) {
-                var iter = Object2BooleanMaps.fastIterator(options);
+                var iter = options.iterator();
                 String previousMod = null;
                 while (iter.hasNext()) {
-                    var next = iter.next();
-                    var key = next.getKey();
+                    var key = iter.next();
 
                     var split = key.id.split("\\.", 2);
                     var mod = split[0];
@@ -151,9 +152,9 @@ public class Config {
                         previousMod = mod;
                     }
 
-                    out.write(next.getKey().id);
+                    out.write(key.id);
                     out.write('=');
-                    out.write(next.getBooleanValue() ? "true\n" : "false\n");
+                    out.write(key.enabled ? "true\n" : "false\n");
                 }
             }
         } catch (IOException e) {
