@@ -77,3 +77,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "pastel-mod"
 curseforge = "pastel"
+
+[[dependencies."${mod_id}"]]
+modId="create"
+type="optional"
+versionRange="${create_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "create"
+curseforge = "create"
