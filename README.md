@@ -8,7 +8,7 @@ Please report such issues to the [issue tracker](https://github.com/Vonr/invasiv
 Each change can also be individually toggled through the config and should solve any issues temporarily while you wait for a fix.
 
 Optimizations included in this mod fall under one of the following categories:
-1. Patch has been sent but has not reviewed for a long time or expected to be useful in before the next release.
+1. Patch has been sent but has not reviewed for a long time or expected to be useful in the time before the next release.
 2. Patch denied due to reasons unrelated to quality, such as non-maintenance, in which case future optimizations will also not be sent to that mod.
 3. Patch has no avenue of contribution (e.g. closed source mods)
 4. Patch already applied but not available in released versions.
