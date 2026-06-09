@@ -168,6 +168,6 @@ public class Config {
 
     public static Stream<Map.Entry<String, List<String>>> getAffectedMods() {
         var modList = ModList.get();
-        return mods.entrySet().stream().filter(e -> modList.isLoaded(e.getKey()));
+        return modList == null ? Stream.empty() : mods.entrySet().stream().filter(e -> modList.isLoaded(e.getKey()));
     }
 }
