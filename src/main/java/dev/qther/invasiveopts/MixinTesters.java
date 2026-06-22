@@ -65,15 +65,6 @@ public class MixinTesters {
         }
     }
 
-    public static class Pastel {
-        public static class NukeItemPredicateMixin implements ConditionTester {
-            @Override
-            public boolean isSatisfied(String mixinClassName) {
-                return Config.Keys.Pastel.NUKE_ITEM_PREDICATE_MIXIN.enabled;
-            }
-        }
-    }
-
     public static class Create {
         public static class FailFastClipboardMigration implements ConditionTester {
             @Override

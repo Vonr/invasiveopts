@@ -12,7 +12,6 @@
     "accessories.roundabout_collection.PatchedDataComponentMapMixin",
     "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
     "create.fail_fast_clipboard_migration.ItemStackMixin",
-    "pastel.nuke_item_predicate_mixin.ItemPredicateMixin",
     "pipez.constant_fullness_checks.FluidPipeTypeMixin",
     "pipez.constant_fullness_checks.GasPipeTypeMixin",
     "pipez.constant_fullness_checks.ItemPipeTypeMixin",

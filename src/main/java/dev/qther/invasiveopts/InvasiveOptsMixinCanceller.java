@@ -12,6 +12,10 @@ public class InvasiveOptsMixinCanceller implements MixinCanceller {
             return true;
         }
 
+        if (Config.Keys.Pastel.NUKE_ITEM_PREDICATE_MIXIN.enabled && mixinClassName.equals("earth.terrarium.pastel.mixin.ItemPredicateMixin")) {
+            return true;
+        }
+
         return false;
     }
 }
