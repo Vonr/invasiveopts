@@ -2,6 +2,7 @@ package dev.qther.invasiveopts.mixin.accessories.roundabout_collection;
 
 import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.mixin.DataComponentPatchAccessor;
+import dev.qther.invasiveopts.mixin.accessories.EventStreamAccessor;
 import io.wispforest.accessories.pond.stack.PatchedDataComponentMapExtension;
 import io.wispforest.accessories.utils.ItemStackMutation;
 import io.wispforest.owo.util.EventStream;
@@ -41,7 +42,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
 
     @Nullable
     @Unique
-    private EventStream<ItemStackMutation> invasiveOpts$AccessoriesmutationEvent = null;
+    private EventStream<ItemStackMutation> invasiveOpts$accessories$mutationEvent = null;
 
     @Override
     public EventStream<ItemStackMutation> accessories$getMutationEvent(ItemStack itemStack) {
@@ -49,15 +50,15 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
 
         this.invasiveOpts$accessories$roundabout_collection$itemStack = itemStack;
 
-        if (invasiveOpts$AccessoriesmutationEvent == null) {
-            invasiveOpts$AccessoriesmutationEvent = new EventStream<>(invokers -> (stack, types) -> {
+        if (invasiveOpts$accessories$mutationEvent == null) {
+            invasiveOpts$accessories$mutationEvent = new EventStream<>(invokers -> (stack, types) -> {
                 for (ItemStackMutation itemStackMutation : invokers) {
                     itemStackMutation.onMutation(stack, types);
                 }
             });
         }
 
-        return invasiveOpts$AccessoriesmutationEvent;
+        return invasiveOpts$accessories$mutationEvent;
     }
 
     @Override
@@ -73,7 +74,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
     private <T> void invasiveOpts$accessories$roundabout_collection$updateChangeValue_set(DataComponentType<? super T> component, @Nullable T value, CallbackInfoReturnable<T> cir){
         this.invasiveOpts$accessories$roundabout_collection$changeCheckStack = true;
 
-        if (this.invasiveOpts$AccessoriesmutationEvent != null) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(List.of(component));
         }
     }
@@ -82,7 +83,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
     private <T> void invasiveOpts$accessories$roundabout_collection$updateChangeValue_remove(DataComponentType<? super T> component, CallbackInfoReturnable<T> cir){
         this.invasiveOpts$accessories$roundabout_collection$changeCheckStack = true;
 
-        if (this.invasiveOpts$AccessoriesmutationEvent != null) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(List.of(component));
         }
     }
@@ -101,7 +102,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
     private void invasiveOpts$accessories$roundabout_collection$updateChangeValue_applyPatchTail(DataComponentPatch patch, CallbackInfo ci){
         this.invasiveOpts$accessories$roundabout_collection$inApplyPatchLock = false;
 
-        if (this.invasiveOpts$AccessoriesmutationEvent != null) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
             var changedDataTypes = List.copyOf(((DataComponentPatchAccessor) (Object) patch).getMap().keySet());
 
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(changedDataTypes);
@@ -112,7 +113,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
     private void invasiveOpts$accessories$roundabout_collection$updateChangeValue_applyPatch(DataComponentType<?> component, Optional<?> value, CallbackInfo ci){
         this.invasiveOpts$accessories$roundabout_collection$changeCheckStack = true;
 
-        if (this.invasiveOpts$AccessoriesmutationEvent != null && !this.invasiveOpts$accessories$roundabout_collection$inApplyPatchLock) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother() && !this.invasiveOpts$accessories$roundabout_collection$inApplyPatchLock) {
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(List.of(component));
         }
     }
@@ -121,18 +122,21 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
     private void invasiveOpts$accessories$roundabout_collection$updateChangeValue_restorePatch(DataComponentPatch patch, CallbackInfo ci){
         this.invasiveOpts$accessories$roundabout_collection$changeCheckStack = true;
 
-        if (this.invasiveOpts$AccessoriesmutationEvent != null) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
             var changedDataTypes = List.copyOf(((DataComponentPatchAccessor) (Object) patch).getMap().keySet());
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(changedDataTypes);
         }
     }
 
     @Unique
-    private void invasiveOpts$accessories$roundabout_collection$handleMutationEvent(List<DataComponentType<?>> changedDataTypes) {
-        if (this.invasiveOpts$AccessoriesmutationEvent == null) {
-            return;
-        }
+    private boolean invasiveOpts$accessories$roundabout_collection$shouldBother() {
+        return this.invasiveOpts$accessories$mutationEvent != null && !((EventStreamAccessor<?>) this.invasiveOpts$accessories$mutationEvent).getSubscribers().isEmpty();
+    }
 
-        this.invasiveOpts$AccessoriesmutationEvent.sink().onMutation(this.invasiveOpts$accessories$roundabout_collection$itemStack, changedDataTypes);
+    @Unique
+    private void invasiveOpts$accessories$roundabout_collection$handleMutationEvent(List<DataComponentType<?>> changedDataTypes) {
+        if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
+            this.invasiveOpts$accessories$mutationEvent.sink().onMutation(this.invasiveOpts$accessories$roundabout_collection$itemStack, changedDataTypes);
+        }
     }
 }

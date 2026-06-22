@@ -9,6 +9,7 @@
   },
   "mixins": [
     "DataComponentPatchAccessor",
+    "accessories.EventStreamAccessor",
     "accessories.roundabout_collection.PatchedDataComponentMapMixin",
     "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
     "create.fail_fast_clipboard_migration.ItemStackMixin",
