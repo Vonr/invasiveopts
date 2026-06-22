@@ -8,6 +8,8 @@
     "minVersion": "0.5.3"
   },
   "mixins": [
+    "DataComponentPatchAccessor",
+    "accessories.roundabout_collection.PatchedDataComponentMapMixin",
     "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
     "create.fail_fast_clipboard_migration.ItemStackMixin",
     "pastel.nuke_item_predicate_mixin.ItemPredicateMixin",

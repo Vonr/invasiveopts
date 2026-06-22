@@ -45,6 +45,10 @@ public class Config {
             public static final Key FAIL_FAST_CLIPBOARD_MIGRATION = key("create.fail_fast_clipboard_migration");
         }
 
+        public static class Accessories {
+            public static final Key ROUNDABOUT_COLLECTION = key("accessories.roundabout_collection");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);

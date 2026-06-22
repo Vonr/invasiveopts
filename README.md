@@ -15,6 +15,8 @@ Optimizations included in this mod fall under one of the following categories:
 
 Current optimizations:
 
+- Accessories
+  - `accessories.roundabout_collection` (1): Avoid iterating Map entrySet by directly accessing underlying keySet. [(PR)](https://github.com/wisp-forest/accessories/pull/400)
 - Botany Pots
   - `botanypots.hopper_insertions` (1): Hopper Botany Pot exponential insertion backoff and emptiness tracking [(PR)](https://github.com/Darkhax-Minecraft/BotanyPots/pull/499)
 - Create

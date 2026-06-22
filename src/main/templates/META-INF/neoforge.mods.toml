@@ -87,3 +87,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "create"
 curseforge = "create"
+
+[[dependencies."${mod_id}"]]
+modId="accessories"
+type="optional"
+versionRange="${accessories_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "accessories"
+curseforge = "accessories"

@@ -82,4 +82,13 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class Accessories {
+        public static class RoundaboutCollection implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Accessories.ROUNDABOUT_COLLECTION.enabled;
+            }
+        }
+    }
 }
