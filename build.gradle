@@ -147,6 +147,9 @@ dependencies {
 
     implementation("io.wispforest:accessories-neoforge:${accessories_version}")
     implementation("org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308dedd1") { exclude group: "fabric-api" }
+
+    implementation("org.appliedenergistics:appliedenergistics2:${project.ae2_version}")
+    compileOnly("org.appliedenergistics:appliedenergistics2:${project.ae2_version}:api")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

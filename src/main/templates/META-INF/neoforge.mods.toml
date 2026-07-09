@@ -97,3 +97,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "accessories"
 curseforge = "accessories"
+
+[[dependencies."${mod_id}"]]
+modId="ae2"
+type="optional"
+versionRange="${ae2_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "ae2"
+curseforge = "applied-energistics-2"

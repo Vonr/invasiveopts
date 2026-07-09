@@ -82,4 +82,13 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class AE2 {
+        public static class CacheFuzzySearchMaxValue implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.AE2.CACHE_FUZZY_SEARCH_MAX_VALUE.enabled;
+            }
+        }
+    }
 }

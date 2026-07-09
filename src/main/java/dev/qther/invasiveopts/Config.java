@@ -49,6 +49,10 @@ public class Config {
             public static final Key ROUNDABOUT_COLLECTION = key("accessories.roundabout_collection");
         }
 
+        public static class AE2 {
+            public static final Key CACHE_FUZZY_SEARCH_MAX_VALUE = key("ae2.cache_fuzzy_search_max_value");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);

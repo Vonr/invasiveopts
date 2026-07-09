@@ -11,6 +11,7 @@
     "DataComponentPatchAccessor",
     "accessories.EventStreamAccessor",
     "accessories.roundabout_collection.PatchedDataComponentMapMixin",
+    "ae2.cache_fuzzy_search_max_value.AEItemKeyMixin",
     "botanypots.hopper_insertion.BotanyPotBlockEntityMixin",
     "create.fail_fast_clipboard_migration.ItemStackMixin",
     "pipez.constant_fullness_checks.FluidPipeTypeMixin",
