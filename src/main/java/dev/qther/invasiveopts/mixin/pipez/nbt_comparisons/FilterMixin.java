@@ -30,15 +30,18 @@ import java.util.UUID;
 )
 @Mixin(Filter.class)
 public class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtension {
-    @Shadow
-    @Nullable
-    protected CompoundTag metadata;
+    @Unique
+    private boolean invasiveOpts$cached;
     @Unique
     public DataComponentPatch invasiveOpts$metadataPatch;
 
+    @Shadow
+    @Nullable
+    protected CompoundTag metadata;
+
     @Inject(method = "<init>", at = @At("RETURN"))
     private void initCache(UUID id, Tag<T> tag, CompoundTag metadata, boolean exactMetadata, DirectionalPosition destination, boolean invert, CallbackInfo ci) {
-        invasiveOpts$decodeAndCache();
+        invasiveopts$getComponentsPatch();
     }
 
     @Inject(method = "copy", at = @At("RETURN"))
@@ -48,28 +51,34 @@ public class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtens
 
     @Inject(method = "setMetadata", at = @At("RETURN"))
     private void cachePatch(CompoundTag metadata, CallbackInfo ci) {
-        invasiveOpts$decodeAndCache();
+        invasiveopts$getComponentsPatch();
     }
 
-    @Unique
-    private void invasiveOpts$decodeAndCache() {
+    @Override
+    public DataComponentPatch invasiveopts$getComponentsPatch() {
+        if (invasiveOpts$cached) {
+            return invasiveOpts$metadataPatch;
+        }
+
         var server = ServerLifecycleHooks.getCurrentServer();
-        assert server != null;
+        if (server == null) {
+            return null;
+        }
+
         var result = DataComponentPatch.CODEC.decode(server.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.metadata).result();
         if (result.isPresent()) {
             invasiveOpts$metadataPatch = result.get().getFirst();
         } else {
             invasiveOpts$metadataPatch = null;
         }
-    }
+        invasiveOpts$cached = true;
 
-    @Override
-    public DataComponentPatch invasiveopts$getComponentsPatch() {
         return this.invasiveOpts$metadataPatch;
     }
 
     @Override
     public void invasiveopts$setComponentsPatch(DataComponentPatch patch) {
         this.invasiveOpts$metadataPatch = patch;
+        this.invasiveOpts$cached = true;
     }
 }
