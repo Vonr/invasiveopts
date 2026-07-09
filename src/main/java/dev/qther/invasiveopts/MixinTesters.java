@@ -91,4 +91,20 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class Placebo {
+        public static class StreamlessHashing implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Placebo.STREAMLESS_HASHING.enabled;
+            }
+        }
+
+        public static class LazyStringConcatenation implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Placebo.LAZY_STRING_CONCATENATION.enabled;
+            }
+        }
+    }
 }

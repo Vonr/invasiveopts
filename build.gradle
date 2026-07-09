@@ -41,6 +41,15 @@ repositories {
         }
     }
 
+    maven {
+        // Shadows
+        url "https://maven.shadowsoffire.dev/releases"
+        content {
+            includeGroup "dev.shadowsoffire"
+            includeGroup "snownee.jade"
+        }
+    }
+
     maven { url 'https://modmaven.dev/' }
 
     maven { url 'https://maven.fallenbreath.me/releases' }
@@ -150,6 +159,8 @@ dependencies {
 
     implementation("org.appliedenergistics:appliedenergistics2:${project.ae2_version}")
     compileOnly("org.appliedenergistics:appliedenergistics2:${project.ae2_version}:api")
+
+    implementation("dev.shadowsoffire:Placebo:1.21.1-${project.placebo_version}")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

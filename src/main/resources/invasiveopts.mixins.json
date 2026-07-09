@@ -30,6 +30,8 @@
     "pipez.stream_abuse.PipeTileEntityMixin",
     "pipez.stream_abuse.PipeTypeMixin",
     "pipez.stream_abuse.UpgradeTileEntityMixin",
+    "placebo.lazy_string_concatenation.DynamicHolderMixin",
+    "placebo.streamless_hashing.CachedObjectMixin",
     "xycraft_machines.redstone_checks.BlockBehaviourMixin",
     "xycraft_machines.redstone_checks.ExtractorBlockEntityMixin",
     "xycraft_machines.redstone_checks.ExtractorBlockMixin",

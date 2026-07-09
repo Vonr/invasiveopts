@@ -53,6 +53,11 @@ public class Config {
             public static final Key CACHE_FUZZY_SEARCH_MAX_VALUE = key("ae2.cache_fuzzy_search_max_value");
         }
 
+        public static class Placebo {
+            public static final Key STREAMLESS_HASHING = key("placebo.streamless_hashing");
+            public static final Key LAZY_STRING_CONCATENATION = key("placebo.lazy_string_concatenation");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);
