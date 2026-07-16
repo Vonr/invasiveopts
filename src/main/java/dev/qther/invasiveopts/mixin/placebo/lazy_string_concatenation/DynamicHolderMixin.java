@@ -38,7 +38,9 @@ public abstract class DynamicHolderMixin<R extends CodecProvider<? super R>> {
     @WrapMethod(method = "get()Ldev/shadowsoffire/placebo/codec/CodecProvider;")
     private R lazyStringConcatenation(Operation<Object> original) {
         this.bind();
-        Objects.requireNonNull(this.value, () -> "Trying to access unbound value: " + this.id);
+        if (this.value == null) {
+            throw new NullPointerException("Trying to access unbound value: " + this.id);
+        }
         return this.value;
     }
 }
