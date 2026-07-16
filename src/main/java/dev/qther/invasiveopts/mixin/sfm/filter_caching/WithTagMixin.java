@@ -54,7 +54,9 @@ public abstract class WithTagMixin implements WithClause {
                     pred = (Object o) -> o instanceof ItemStack;
                     pex.invasiveOpts$setPredicate(pred);
                 } else {
-                    pred = (Object o) -> o instanceof ItemStack itemStack && bitset.get(((AtomicIdExtension) itemStack.getItem()).invasiveOpts$getId());
+                    // trimToSize() in a roundabout way because trimToSize() is private
+                    final var bits = (BitSet) bitset.clone();
+                    pred = (Object o) -> o instanceof ItemStack itemStack && bits.get(((AtomicIdExtension) itemStack.getItem()).invasiveOpts$getId());
                     pex.invasiveOpts$setPredicate(pred);
                 }
             } else if (stack instanceof FluidStack) {
@@ -70,7 +72,9 @@ public abstract class WithTagMixin implements WithClause {
                     pred = (Object o) -> o instanceof FluidStack;
                     pex.invasiveOpts$setPredicate(pred);
                 } else {
-                    pred = (Object o) -> o instanceof FluidStack fluidStack && bitset.get(((AtomicIdExtension) fluidStack.getFluid()).invasiveOpts$getId());
+                    // trimToSize() in a roundabout way because trimToSize() is private
+                    final var bits = (BitSet) bitset.clone();
+                    pred = (Object o) -> o instanceof FluidStack fluidStack && bits.get(((AtomicIdExtension) fluidStack.getFluid()).invasiveOpts$getId());
                     pex.invasiveOpts$setPredicate(pred);
                 }
             }
