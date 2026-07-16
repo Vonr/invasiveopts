@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.maxhenkel.pipez.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.helpers.PipezFilterExtension;
+import dev.qther.invasiveopts.extensions.PipezFilterExtension;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.HolderLookup;

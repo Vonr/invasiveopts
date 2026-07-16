@@ -1,7 +1,7 @@
 package dev.qther.invasiveopts.mixin.xycraft_machines.redstone_checks;
 
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.helpers.ExtractorBlockEntityExtension;
+import dev.qther.invasiveopts.extensions.ExtractorBlockEntityExtension;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import org.spongepowered.asm.mixin.Mixin;

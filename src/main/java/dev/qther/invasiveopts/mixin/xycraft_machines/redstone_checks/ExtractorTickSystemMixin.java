@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.helpers.ExtractorBlockEntityExtension;
+import dev.qther.invasiveopts.extensions.ExtractorBlockEntityExtension;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.BlockPos;

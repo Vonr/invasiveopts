@@ -1,4 +1,4 @@
-package dev.qther.invasiveopts.helpers;
+package dev.qther.invasiveopts.extensions;
 
 import net.minecraft.core.component.DataComponentPatch;
 

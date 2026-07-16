@@ -107,4 +107,13 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class SFM {
+        public static class FilterCaching implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.SFM.FILTER_CACHING.enabled;
+            }
+        }
+    }
 }

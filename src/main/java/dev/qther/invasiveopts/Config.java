@@ -58,6 +58,10 @@ public class Config {
             public static final Key LAZY_STRING_CONCATENATION = key("placebo.lazy_string_concatenation");
         }
 
+        public static class SFM {
+            public static final Key FILTER_CACHING = key("sfm.filter_caching", false);
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);

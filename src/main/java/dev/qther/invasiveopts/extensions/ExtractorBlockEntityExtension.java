@@ -1,4 +1,4 @@
-package dev.qther.invasiveopts.helpers;
+package dev.qther.invasiveopts.extensions;
 
 public interface ExtractorBlockEntityExtension {
     void invasiveopts$setHasSignal(boolean hasSignal);
