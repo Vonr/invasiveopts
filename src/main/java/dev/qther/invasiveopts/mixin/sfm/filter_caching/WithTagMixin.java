@@ -6,7 +6,9 @@ import ca.teamdman.sfml.ast.WithClause;
 import ca.teamdman.sfml.ast.WithTag;
 import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
-import dev.qther.invasiveopts.extensions.SFMPredicateExtension;
+import dev.qther.invasiveopts.extensions.SFMFilterCachingExtension;
+import dev.qther.invasiveopts.helpers.SFMFilterCachingHelper;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.BitSet;
 import java.util.Objects;
 
 @Restriction(
@@ -38,43 +39,59 @@ public abstract class WithTagMixin implements WithClause {
     private <STACK> void matchesStack(ResourceType<STACK, ?, ?> resourceType, STACK stack, CallbackInfoReturnable<Boolean> cir) {
         Objects.requireNonNull(this.tagMatcher);
 
-        var pex = (SFMPredicateExtension) this.tagMatcher;
+        var pex = (SFMFilterCachingExtension) this.tagMatcher;
         var pred = pex.invasiveOpts$getPredicate();
         if (pred == null) {
             if (stack instanceof ItemStack) {
-                var bitset = new BitSet();
+                var bits = new IntArrayList();
                 for (var entry : BuiltInRegistries.ITEM.entrySet()) {
                     var tags = resourceType.getTagsForStack((STACK) entry.getValue().getDefaultInstance());
                     if (tags.anyMatch(this.tagMatcher::testResourceLocation)) {
-                        bitset.set(((AtomicIdExtension) entry.getValue()).invasiveOpts$getId());
+                        bits.add(((AtomicIdExtension) entry.getValue()).invasiveOpts$getId());
                     }
                 }
 
-                if (bitset.cardinality() == BuiltInRegistries.ITEM.size()) {
+                if (bits.size() == BuiltInRegistries.ITEM.size()) {
                     pred = (Object o) -> o instanceof ItemStack;
                     pex.invasiveOpts$setPredicate(pred);
                 } else {
-                    // trimToSize() in a roundabout way because trimToSize() is private
-                    final var bits = (BitSet) bitset.clone();
-                    pred = (Object o) -> o instanceof ItemStack itemStack && bits.get(((AtomicIdExtension) itemStack.getItem()).invasiveOpts$getId());
+                    var skippedBitSet = SFMFilterCachingHelper.listToBitSet(bits);
+                    var bitset = skippedBitSet.first();
+                    var start = skippedBitSet.secondInt();
+                    pred = (Object o) -> {
+                        if (!(o instanceof ItemStack itemStack)) {
+                            return false;
+                        }
+
+                        var id = ((AtomicIdExtension) itemStack.getItem()).invasiveOpts$getId() - start;
+                        return id >= 0 && bitset.get(id);
+                    };
                     pex.invasiveOpts$setPredicate(pred);
                 }
             } else if (stack instanceof FluidStack) {
-                var bitset = new BitSet();
+                var bits = new IntArrayList();
                 for (var entry : BuiltInRegistries.FLUID.entrySet()) {
                     var tags = resourceType.getTagsForStack((STACK) new FluidStack(entry.getValue(), 1000));
                     if (tags.anyMatch(this.tagMatcher::testResourceLocation)) {
-                        bitset.set(((AtomicIdExtension) entry.getValue()).invasiveOpts$getId());
+                        bits.add(((AtomicIdExtension) entry.getValue()).invasiveOpts$getId());
                     }
                 }
 
-                if (bitset.cardinality() == BuiltInRegistries.FLUID.size()) {
+                if (bits.size() == BuiltInRegistries.ITEM.size()) {
                     pred = (Object o) -> o instanceof FluidStack;
                     pex.invasiveOpts$setPredicate(pred);
                 } else {
-                    // trimToSize() in a roundabout way because trimToSize() is private
-                    final var bits = (BitSet) bitset.clone();
-                    pred = (Object o) -> o instanceof FluidStack fluidStack && bits.get(((AtomicIdExtension) fluidStack.getFluid()).invasiveOpts$getId());
+                    var skippedBitSet = SFMFilterCachingHelper.listToBitSet(bits);
+                    var bitset = skippedBitSet.first();
+                    var start = skippedBitSet.secondInt();
+                    pred = (Object o) -> {
+                        if (!(o instanceof FluidStack fluidStack)) {
+                            return false;
+                        }
+
+                        var id = ((AtomicIdExtension) fluidStack.getFluid()).invasiveOpts$getId() - start;
+                        return id >= 0 && bitset.get(id);
+                    };
                     pex.invasiveOpts$setPredicate(pred);
                 }
             }
