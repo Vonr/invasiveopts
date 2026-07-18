@@ -2,7 +2,7 @@ package dev.qther.invasiveopts.mixin.sfm.filter_caching;
 
 import ca.teamdman.sfml.ast.ResourceIdentifier;
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.extensions.SFMFilterCachingExtension;
+import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ import java.util.function.Predicate;
         }
 )
 @Mixin(ResourceIdentifier.class)
-public class ResourceIdentifierMixin implements SFMFilterCachingExtension {
+public class ResourceIdentifierMixin implements FilterCachingExtension {
     @Unique
     Predicate<Object> invasiveOpts$predicate;
 

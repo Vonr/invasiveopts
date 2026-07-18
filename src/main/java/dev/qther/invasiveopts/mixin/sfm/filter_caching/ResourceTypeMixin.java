@@ -3,7 +3,7 @@ package dev.qther.invasiveopts.mixin.sfm.filter_caching;
 import ca.teamdman.sfm.common.resourcetype.ResourceType;
 import ca.teamdman.sfml.ast.ResourceIdentifier;
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.extensions.SFMFilterCachingExtension;
+import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import dev.qther.invasiveopts.helpers.FilterCachingHelper;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ResourceTypeMixin<STACK, ITEM, CAP> {
     @Inject(method = "matchesStack", at = @At("HEAD"), cancellable = true)
     private void cacheResourceLocation(ResourceIdentifier<STACK, ITEM, CAP> resourceId, Object stack, CallbackInfoReturnable<Boolean> cir) {
-        var pex = (SFMFilterCachingExtension) resourceId;
+        var pex = (FilterCachingExtension) resourceId;
         var pred = pex.invasiveOpts$getPredicate();
         if (pred == null) {
             if (stack instanceof ItemStack) {

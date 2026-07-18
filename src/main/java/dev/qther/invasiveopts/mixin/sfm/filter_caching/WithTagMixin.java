@@ -5,7 +5,7 @@ import ca.teamdman.sfml.ast.TagMatcher;
 import ca.teamdman.sfml.ast.WithClause;
 import ca.teamdman.sfml.ast.WithTag;
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.extensions.SFMFilterCachingExtension;
+import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import dev.qther.invasiveopts.helpers.FilterCachingHelper;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
@@ -37,7 +37,7 @@ public abstract class WithTagMixin implements WithClause {
     private <STACK> void matchesStack(ResourceType<STACK, ?, ?> resourceType, STACK stack, CallbackInfoReturnable<Boolean> cir) {
         Objects.requireNonNull(this.tagMatcher);
 
-        var pex = (SFMFilterCachingExtension) this.tagMatcher;
+        var pex = (FilterCachingExtension) this.tagMatcher;
         var pred = pex.invasiveOpts$getPredicate();
         if (pred == null) {
             if (stack instanceof ItemStack) {
