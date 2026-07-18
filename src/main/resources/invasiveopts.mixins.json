@@ -10,7 +10,9 @@
   "mixins": [
     "DataComponentPatchAccessor",
     "FluidMixin",
+    "FluidStackMixin",
     "ItemMixin",
+    "ItemStackMixin",
     "accessories.EventStreamAccessor",
     "accessories.roundabout_collection.PatchedDataComponentMapMixin",
     "ae2.cache_fuzzy_search_max_value.AEItemKeyMixin",

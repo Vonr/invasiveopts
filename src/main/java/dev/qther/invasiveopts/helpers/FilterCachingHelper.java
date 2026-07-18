@@ -2,82 +2,107 @@ package dev.qther.invasiveopts.helpers;
 
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntComparators;
+import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.BitSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class FilterCachingHelper {
-    public static <Ext, Stack> Predicate<Object> makePredicate(Class<Stack> stackClass, Function<Stack, Ext> stackToExt, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
-        var trues = new IntArrayList();
-        var falses = new IntArrayList();
+    public static <Ext> Predicate<Object> makePredicate(Predicate<Object> isStack, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
+        var trueList = new IntArrayList();
+        var falseList = new IntArrayList();
 
         for (var entry : registry) {
             var id = ((AtomicIdExtension) entry.getValue()).invasiveOpts$getId();
             if (entryPredicate.test(entry)) {
-                trues.push(id);
+                trueList.push(id);
             } else {
-                falses.push(id);
+                falseList.push(id);
             }
         }
 
-        if (trues.isEmpty()) {
+        if (trueList.isEmpty()) {
             return o -> false;
         }
-        if (falses.isEmpty()) {
-            return stackClass::isInstance;
+        if (falseList.isEmpty()) {
+            return isStack;
         }
 
-        trues.unstableSort(IntComparators.NATURAL_COMPARATOR);
-        falses.unstableSort(IntComparators.NATURAL_COMPARATOR);
+        trueList.trim();
+        falseList.trim();
+
+        var trues = trueList.elements();
+        var falses = falseList.elements();
+        IntArrays.radixSort(trues);
+        IntArrays.radixSort(falses);
 
         var truesSpan = Integer.MAX_VALUE;
-        if (!trues.isEmpty()) {
-            truesSpan = trues.getInt(trues.size() - 1) - trues.getInt(0);
+        if (trues.length != 0) {
+            truesSpan = trues[trues.length - 1] - trues[0];
         }
         var falsesSpan = Integer.MAX_VALUE;
-        if (!falses.isEmpty()) {
-            falsesSpan = falses.getInt(falses.size() - 1) - falses.getInt(0);
+        if (falses.length != 0) {
+            falsesSpan = falses[falses.length - 1] - falses[0];
         }
 
-        BitSet bitset;
         if (truesSpan <= falsesSpan) {
-            bitset = new BitSet(truesSpan);
-            var start = trues.getInt(0);
+            if (truesSpan > trues.length * Integer.SIZE) {
+                // Sparse
+                return o -> {
+                    if (!isStack.test(o)) {
+                        return false;
+                    }
+
+                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+                    return IntArrays.binarySearch(trues, id) >= 0;
+                };
+            }
+
+            var bitset = new BitSet(truesSpan);
+            var start = trues[0];
             for (var n : trues) {
                 bitset.set(n - start);
             }
 
             return o -> {
-                if (!stackClass.isInstance(o)) {
+                if (!isStack.test(o)) {
                     return false;
                 }
 
-                // noinspection unchecked
-                var id = ((AtomicIdExtension) stackToExt.apply((Stack) o)).invasiveOpts$getId();
+                var id = ((AtomicIdExtension) o).invasiveOpts$getId();
                 if (id < start) {
                     return false;
                 }
                 return bitset.get(id - start);
             };
         } else {
-            bitset = new BitSet(falsesSpan);
-            var start = trues.getInt(0);
+            if (falsesSpan > trues.length * Integer.SIZE) {
+                // Sparse
+                return o -> {
+                    if (!isStack.test(o)) {
+                        return false;
+                    }
+
+                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+                    return IntArrays.binarySearch(falses, id) < 0;
+                };
+            }
+
+            var bitset = new BitSet(falsesSpan);
+            var start = trues[0];
             for (var n : falses) {
                 bitset.set(n - start);
             }
 
             return o -> {
-                if (!stackClass.isInstance(o)) {
+                if (!isStack.test(o)) {
                     return false;
                 }
 
-                // noinspection unchecked
-                var id = ((AtomicIdExtension) stackToExt.apply((Stack) o)).invasiveOpts$getId();
+                var id = ((AtomicIdExtension) o).invasiveOpts$getId();
                 if (id < start) {
                     return true;
                 }
