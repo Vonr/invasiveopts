@@ -29,10 +29,10 @@ public class ResourceTypeMixin<STACK, ITEM, CAP> {
         var pred = pex.invasiveOpts$getPredicate();
         if (pred == null) {
             if (stack instanceof ItemStack) {
-                pred = FilterCachingHelper.makePredicate(o -> o instanceof ItemStack, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.ITEM.entrySet());
+                pred = FilterCachingHelper.makePredicate(resourceId, o -> o instanceof ItemStack, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.ITEM.entrySet());
                 pex.invasiveOpts$setPredicate(pred);
             } else if (stack instanceof FluidStack) {
-                pred = FilterCachingHelper.makePredicate(o -> o instanceof FluidStack, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.FLUID.entrySet());
+                pred = FilterCachingHelper.makePredicate(resourceId, o -> o instanceof FluidStack, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.FLUID.entrySet());
                 pex.invasiveOpts$setPredicate(pred);
             }
         }

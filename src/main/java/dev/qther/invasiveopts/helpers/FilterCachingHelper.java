@@ -1,113 +1,145 @@
 package dev.qther.invasiveopts.helpers;
 
+import ca.teamdman.sfml.ast.TagMatcher;
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrays;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.BitSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
 public class FilterCachingHelper {
-    public static <Ext> Predicate<Object> makePredicate(Predicate<Object> isStack, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
-        var trueList = new IntArrayList();
-        var falseList = new IntArrayList();
+    private static final Object2ObjectOpenHashMap<Object, Predicate<Object>> PREDICATE_CACHE = new Object2ObjectOpenHashMap<>();
 
-        for (var entry : registry) {
-            var id = ((AtomicIdExtension) entry.getValue()).invasiveOpts$getId();
-            if (entryPredicate.test(entry)) {
-                trueList.push(id);
+    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Object> isStack, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
+        return PREDICATE_CACHE.computeIfAbsent(key, ignored -> {
+            var trueList = new IntArrayList();
+            var falseList = new IntArrayList();
+
+            for (var entry : registry) {
+                var id = ((AtomicIdExtension) entry.getValue()).invasiveOpts$getId();
+                if (entryPredicate.test(entry)) {
+                    trueList.push(id);
+                } else {
+                    falseList.push(id);
+                }
+            }
+
+            if (trueList.isEmpty()) {
+                return o -> false;
+            }
+            if (falseList.isEmpty()) {
+                return isStack;
+            }
+
+            trueList.trim();
+            falseList.trim();
+
+            var trues = trueList.elements();
+            var falses = falseList.elements();
+            IntArrays.radixSort(trues);
+            IntArrays.radixSort(falses);
+
+            var truesSpan = Integer.MAX_VALUE;
+            if (trues.length != 0) {
+                truesSpan = trues[trues.length - 1] - trues[0];
+            }
+            var falsesSpan = Integer.MAX_VALUE;
+            if (falses.length != 0) {
+                falsesSpan = falses[falses.length - 1] - falses[0];
+            }
+
+            if (truesSpan <= falsesSpan) {
+                if (truesSpan > trues.length * Integer.SIZE) {
+                    // Sparse
+                    return o -> {
+                        if (!isStack.test(o)) {
+                            return false;
+                        }
+
+                        var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+                        return IntArrays.binarySearch(trues, id) >= 0;
+                    };
+                }
+
+                var bitset = new BitSet(truesSpan);
+                var start = trues[0];
+                for (var n : trues) {
+                    bitset.set(n - start);
+                }
+
+                return o -> {
+                    if (!isStack.test(o)) {
+                        return false;
+                    }
+
+                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+                    if (id < start) {
+                        return false;
+                    }
+                    return bitset.get(id - start);
+                };
             } else {
-                falseList.push(id);
-            }
-        }
+                if (falsesSpan > trues.length * Integer.SIZE) {
+                    // Sparse
+                    return o -> {
+                        if (!isStack.test(o)) {
+                            return false;
+                        }
 
-        if (trueList.isEmpty()) {
-            return o -> false;
-        }
-        if (falseList.isEmpty()) {
-            return isStack;
-        }
+                        var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+                        return IntArrays.binarySearch(falses, id) < 0;
+                    };
+                }
 
-        trueList.trim();
-        falseList.trim();
+                var bitset = new BitSet(falsesSpan);
+                var start = trues[0];
+                for (var n : falses) {
+                    bitset.set(n - start);
+                }
 
-        var trues = trueList.elements();
-        var falses = falseList.elements();
-        IntArrays.radixSort(trues);
-        IntArrays.radixSort(falses);
-
-        var truesSpan = Integer.MAX_VALUE;
-        if (trues.length != 0) {
-            truesSpan = trues[trues.length - 1] - trues[0];
-        }
-        var falsesSpan = Integer.MAX_VALUE;
-        if (falses.length != 0) {
-            falsesSpan = falses[falses.length - 1] - falses[0];
-        }
-
-        if (truesSpan <= falsesSpan) {
-            if (truesSpan > trues.length * Integer.SIZE) {
-                // Sparse
                 return o -> {
                     if (!isStack.test(o)) {
                         return false;
                     }
 
                     var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                    return IntArrays.binarySearch(trues, id) >= 0;
-                };
-            }
-
-            var bitset = new BitSet(truesSpan);
-            var start = trues[0];
-            for (var n : trues) {
-                bitset.set(n - start);
-            }
-
-            return o -> {
-                if (!isStack.test(o)) {
-                    return false;
-                }
-
-                var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                if (id < start) {
-                    return false;
-                }
-                return bitset.get(id - start);
-            };
-        } else {
-            if (falsesSpan > trues.length * Integer.SIZE) {
-                // Sparse
-                return o -> {
-                    if (!isStack.test(o)) {
-                        return false;
+                    if (id < start) {
+                        return true;
                     }
-
-                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                    return IntArrays.binarySearch(falses, id) < 0;
+                    return !bitset.get(id - start);
                 };
             }
+        });
+    }
 
-            var bitset = new BitSet(falsesSpan);
-            var start = trues[0];
-            for (var n : falses) {
-                bitset.set(n - start);
+    public static class SFMTagMatcherWrapper {
+        public TagMatcher inner;
+
+        public SFMTagMatcherWrapper(TagMatcher inner) {
+            this.inner = inner;
+        }
+
+        @SuppressWarnings("SlowListContainsAll")
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            } else if (o instanceof SFMTagMatcherWrapper that) {
+                return Objects.equals(this.inner.namespacePattern, that.inner.namespacePattern) && this.inner.pathElementPatterns.containsAll(that.inner.pathElementPatterns) && that.inner.pathElementPatterns.containsAll(this.inner.pathElementPatterns);
+            } else {
+                return false;
             }
+        }
 
-            return o -> {
-                if (!isStack.test(o)) {
-                    return false;
-                }
-
-                var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                if (id < start) {
-                    return true;
-                }
-                return !bitset.get(id - start);
-            };
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.inner.namespacePattern, this.inner.pathElementPatterns);
         }
     }
 }
