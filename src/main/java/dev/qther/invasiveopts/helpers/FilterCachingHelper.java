@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceKey;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.BitSet;
 import java.util.Map;
@@ -16,7 +17,64 @@ import java.util.function.Predicate;
 public class FilterCachingHelper {
     private static final Object2ObjectOpenHashMap<Object, Predicate<Object>> PREDICATE_CACHE = new Object2ObjectOpenHashMap<>();
 
-    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Object> isStack, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
+    private static final AlwaysTrue ALWAYS_TRUE = new AlwaysTrue();
+    private static final AlwaysFalse ALWAYS_FALSE = new AlwaysFalse();
+
+    private static class AlwaysTrue implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            return true;
+        }
+    }
+
+    private static class AlwaysFalse implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            return false;
+        }
+    }
+
+    private record BitSetMatcher(BitSet bitset, int start) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+            if (id < start) {
+                return false;
+            }
+
+            return bitset.get(id);
+        }
+    }
+
+    private record InvertedBitSetMatcher(BitSet bitset, int start) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+            if (id < start) {
+                return false;
+            }
+
+            return !bitset.get(id);
+        }
+    }
+
+    private record ArrayMatcher(int[] array) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+            return array.length <= 8 ? ArrayUtils.contains(array, id) : IntArrays.binarySearch(array, id) >= 0;
+        }
+    }
+
+    private record InvertedArrayMatcher(int[] array) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+            return array.length <= 8 ? !ArrayUtils.contains(array, id) : IntArrays.binarySearch(array, id) < 0;
+        }
+    }
+
+    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
         return PREDICATE_CACHE.computeIfAbsent(key, ignored -> {
             var trueList = new IntArrayList();
             var falseList = new IntArrayList();
@@ -30,11 +88,11 @@ public class FilterCachingHelper {
                 }
             }
 
-            if (trueList.isEmpty()) {
-                return o -> false;
-            }
             if (falseList.isEmpty()) {
-                return isStack;
+                return ALWAYS_TRUE;
+            }
+            if (trueList.isEmpty()) {
+                return ALWAYS_FALSE;
             }
 
             trueList.trim();
@@ -57,14 +115,7 @@ public class FilterCachingHelper {
             if (truesSpan <= falsesSpan) {
                 if (truesSpan > trues.length * Integer.SIZE) {
                     // Sparse
-                    return o -> {
-                        if (!isStack.test(o)) {
-                            return false;
-                        }
-
-                        var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                        return IntArrays.binarySearch(trues, id) >= 0;
-                    };
+                    return new ArrayMatcher(trues);
                 }
 
                 var bitset = new BitSet(truesSpan);
@@ -73,28 +124,11 @@ public class FilterCachingHelper {
                     bitset.set(n - start);
                 }
 
-                return o -> {
-                    if (!isStack.test(o)) {
-                        return false;
-                    }
-
-                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                    if (id < start) {
-                        return false;
-                    }
-                    return bitset.get(id - start);
-                };
+                return new BitSetMatcher(bitset, start);
             } else {
                 if (falsesSpan > trues.length * Integer.SIZE) {
                     // Sparse
-                    return o -> {
-                        if (!isStack.test(o)) {
-                            return false;
-                        }
-
-                        var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                        return IntArrays.binarySearch(falses, id) < 0;
-                    };
+                    return new InvertedArrayMatcher(falses);
                 }
 
                 var bitset = new BitSet(falsesSpan);
@@ -103,17 +137,7 @@ public class FilterCachingHelper {
                     bitset.set(n - start);
                 }
 
-                return o -> {
-                    if (!isStack.test(o)) {
-                        return false;
-                    }
-
-                    var id = ((AtomicIdExtension) o).invasiveOpts$getId();
-                    if (id < start) {
-                        return true;
-                    }
-                    return !bitset.get(id - start);
-                };
+                return new InvertedBitSetMatcher(bitset, start);
             }
         });
     }
