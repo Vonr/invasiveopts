@@ -25,12 +25,17 @@ import java.util.Objects;
 public class ItemPipeTypeMixin {
     @WrapMethod(method = "matches")
     private boolean matches(HolderLookup.Provider provider, Filter<?, Item> filter, ItemStack stack, Operation<Boolean> original) {
+        var tag = filter.getTag();
         if (filter.getMetadata() == null) {
-            return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            return tag == null || tag.contains(stack.getItem());
         }
-
+            
         var patch = ((PipezFilterExtension) filter).invasiveopts$getComponentsPatch();
         if (patch == null) {
+            return false;
+        }
+
+        if (tag != null && !tag.contains(stack.getItem())) {
             return false;
         }
 
@@ -47,7 +52,7 @@ public class ItemPipeTypeMixin {
                 }
             }
 
-            return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            return true;
         }
     }
 }
