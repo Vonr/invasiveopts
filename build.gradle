@@ -146,7 +146,7 @@ dependencies {
     implementation "curse.maven:xycraft-machines-653791:${xycraft_machines_version}"
 
     // too many dependencies to bother adding for `implementation`
-    compileOnly "maven.modrinth:pastel-mod:${project.pastel_version}"
+    compileOnly "maven.modrinth:pastel:${project.pastel_version}"
 
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
