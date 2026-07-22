@@ -74,6 +74,20 @@ public class FilterCachingHelper {
         }
     }
 
+    private record SingleMatcher(int value) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            return ((AtomicIdExtension) o).invasiveOpts$getId() == value;
+        }
+    }
+
+    private record InvertedSingleMatcher(int value) implements Predicate<Object> {
+        @Override
+        public boolean test(Object o) {
+            return ((AtomicIdExtension) o).invasiveOpts$getId() != value;
+        }
+    }
+
     public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
         return PREDICATE_CACHE.computeIfAbsent(key, ignored -> {
             var trueList = new IntArrayList();
@@ -93,6 +107,12 @@ public class FilterCachingHelper {
             }
             if (trueList.isEmpty()) {
                 return ALWAYS_FALSE;
+            }
+            if (trueList.size() == 1) {
+                return new SingleMatcher(trueList.getInt(0));
+            }
+            if (falseList.size() == 1) {
+                return new InvertedSingleMatcher(trueList.getInt(0));
             }
 
             trueList.trim();
