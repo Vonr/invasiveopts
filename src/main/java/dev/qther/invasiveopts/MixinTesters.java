@@ -47,6 +47,13 @@ public class MixinTesters {
                 return Config.Keys.Pipez.NBT_COMPARISONS.enabled;
             }
         }
+
+        public static class FilterCaching implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Pipez.FILTER_CACHING.enabled;
+            }
+        }
     }
 
     public static class XycraftMachines {

@@ -42,11 +42,11 @@ public abstract class WithTagMixin implements WithClause {
         if (pred == null) {
             if (stack instanceof ItemStack) {
                 //noinspection unchecked
-                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) e.getValue().getDefaultInstance()).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.ITEM.entrySet());
+                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) e.value().getDefaultInstance()).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.ITEM.holders());
                 pex.invasiveOpts$setPredicate(pred);
             } else if (stack instanceof FluidStack) {
                 //noinspection unchecked
-                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) new FluidStack(e.getValue(), 1000)).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.FLUID.entrySet());
+                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) new FluidStack(e.value(), 1000)).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.FLUID.holders());
                 pex.invasiveOpts$setPredicate(pred);
             }
         }

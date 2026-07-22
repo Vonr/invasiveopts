@@ -12,7 +12,7 @@ Optimizations included in this mod fall under one of the following categories:
 2. Patch denied due to reasons unrelated to quality, such as non-maintenance, in which case future optimizations will also not be sent to that mod.
 3. Patch has no avenue of contribution (e.g. closed source mods)
 4. Patch already applied but not available in released versions.
-5. Patch is of dubious usefulness (these are disabled by default)
+5. Patch is experimental or of dubious usefulness (these are disabled by default)
 
 Current optimizations:
 
@@ -32,11 +32,12 @@ Current optimizations:
   - `pipez.extract_looped_work` (2): Move some work out of loops to avoid duplicated work
   - `pipez.nbt_comparisons` (2): Drastically improves performance of NBT comparisons by minimizing serialization/deserialization operations
   - `pipez.stream_abuse` (2): Reduces abuse of Streams in hot paths to reduce allocation rate [(PR)](https://github.com/henkelmax/pipez/pull/296)
+  - `pipez.filter_caching` (2): Caches tag filters using BitSets, integer arrays, or single integers. Uses more memory and causes loading pipes to take marginally longer.
 - Placebo
   - `placebo.streamless_hashing` (1): Replaces CachedObject#hashComponents with equivalent code that does not use the Stream API. [(PR)](https://github.com/Shadows-of-Fire/Placebo/pull/122)
   - `placebo.lazy_string_concatenation` (1): Pass a Supplier<String> to Object#requireNonNull in DynamicHolder#get as it is a cold path in hot code. [(PR)](https://github.com/Shadows-of-Fire/Placebo/pull/122)
 - SFM
-  - `sfm.filter_caching` (5): Caches item and fluid filters (regular/regex and tag filters for now) using BitSets. Uses more memory and causes first compiles to take longer.
+  - `sfm.filter_caching` (5): Caches item and fluid filters (regular/regex and tag filters for now) using BitSets, integer arrays, or single integers. Uses more memory and causes first compiles to take longer.
 - Xycraft Machines
   - `xycraft_machines.unnecessary_resorting` (3): Extractors resort their recipes every so often but is usually not necessary
   - `xycraft_machines.redstone_checks` (3): Extractors check for redstone signals every tick rather than only when their neighbours update

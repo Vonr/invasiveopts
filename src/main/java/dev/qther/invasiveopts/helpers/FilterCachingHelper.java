@@ -5,14 +5,13 @@ import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.BitSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class FilterCachingHelper {
     private static final Object2ObjectOpenHashMap<Object, Predicate<Object>> PREDICATE_CACHE = new Object2ObjectOpenHashMap<>();
@@ -88,19 +87,19 @@ public class FilterCachingHelper {
         }
     }
 
-    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Map.Entry<ResourceKey<Ext>, Ext>> entryPredicate, Set<Map.Entry<ResourceKey<Ext>, Ext>> registry) {
+    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Holder.Reference<Ext>> entryPredicate, Stream<Holder.Reference<Ext>> registry) {
         return PREDICATE_CACHE.computeIfAbsent(key, ignored -> {
             var trueList = new IntArrayList();
             var falseList = new IntArrayList();
 
-            for (var entry : registry) {
-                var id = ((AtomicIdExtension) entry.getValue()).invasiveOpts$getId();
+            registry.forEach(entry -> {
+                var id = ((AtomicIdExtension) entry.value()).invasiveOpts$getId();
                 if (entryPredicate.test(entry)) {
                     trueList.push(id);
                 } else {
                     falseList.push(id);
                 }
-            }
+            });
 
             if (falseList.isEmpty()) {
                 return ALWAYS_TRUE;

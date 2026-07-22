@@ -30,6 +30,7 @@ public class Config {
             public static final Key EXTRACT_LOOPED_WORK = key("pipez.extract_looped_work");
             public static final Key NBT_COMPARISONS = key("pipez.nbt_comparisons");
             public static final Key STREAM_ABUSE = key("pipez.stream_abuse");
+            public static final Key FILTER_CACHING = key("pipez.filter_caching", false);
         }
 
         public static class XycraftMachines {
