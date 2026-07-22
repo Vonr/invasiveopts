@@ -1,14 +1,21 @@
-package dev.qther.invasiveopts.mixin;
+package dev.qther.invasiveopts.mixin.mekanism;
 
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
-import net.minecraft.world.level.material.Fluid;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
+import mekanism.api.chemical.Chemical;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Mixin(Fluid.class)
-public class FluidMixin implements AtomicIdExtension {
+@Restriction(
+        require = {
+                @Condition(value = "mekanism"),
+        }
+)
+@Mixin(Chemical.class)
+public class ChemicalMixin implements AtomicIdExtension {
     @Unique
     private static final AtomicInteger invasiveOpts$counter = new AtomicInteger(0);
 

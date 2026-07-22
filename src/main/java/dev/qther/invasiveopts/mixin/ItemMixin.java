@@ -13,7 +13,7 @@ public class ItemMixin implements AtomicIdExtension {
     private static final AtomicInteger invasiveOpts$counter = new AtomicInteger(0);
 
     @Unique
-    int invasiveOpts$id = invasiveOpts$counter.getAndAdd(1);
+    private final int invasiveOpts$id = invasiveOpts$counter.getAndAdd(1);
 
     @Override
     public int invasiveOpts$getId() {

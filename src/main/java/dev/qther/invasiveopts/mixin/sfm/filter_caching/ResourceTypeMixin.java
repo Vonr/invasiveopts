@@ -3,6 +3,7 @@ package dev.qther.invasiveopts.mixin.sfm.filter_caching;
 import ca.teamdman.sfm.common.resourcetype.ResourceType;
 import ca.teamdman.sfml.ast.ResourceIdentifier;
 import dev.qther.invasiveopts.MixinTesters;
+import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import dev.qther.invasiveopts.helpers.FilterCachingHelper;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
@@ -31,14 +32,16 @@ public class ResourceTypeMixin<STACK, ITEM, CAP> {
             if (stack instanceof ItemStack) {
                 pred = FilterCachingHelper.makePredicate(resourceId, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.ITEM.holders());
                 pex.invasiveOpts$setPredicate(pred);
+                FilterCachingHelper.registerExtension(pex);
             } else if (stack instanceof FluidStack) {
                 pred = FilterCachingHelper.makePredicate(resourceId, e -> resourceId.matchesResourceLocation(e.getKey().location()), BuiltInRegistries.FLUID.holders());
                 pex.invasiveOpts$setPredicate(pred);
+                FilterCachingHelper.registerExtension(pex);
             }
         }
 
         if (pred != null) {
-            cir.setReturnValue(pred.test(stack));
+            cir.setReturnValue(pred.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
         }
     }
 }

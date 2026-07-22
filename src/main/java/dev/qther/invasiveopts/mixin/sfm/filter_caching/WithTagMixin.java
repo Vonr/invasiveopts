@@ -5,6 +5,7 @@ import ca.teamdman.sfml.ast.TagMatcher;
 import ca.teamdman.sfml.ast.WithClause;
 import ca.teamdman.sfml.ast.WithTag;
 import dev.qther.invasiveopts.MixinTesters;
+import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import dev.qther.invasiveopts.helpers.FilterCachingHelper;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
@@ -44,15 +45,17 @@ public abstract class WithTagMixin implements WithClause {
                 //noinspection unchecked
                 pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) e.value().getDefaultInstance()).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.ITEM.holders());
                 pex.invasiveOpts$setPredicate(pred);
+                FilterCachingHelper.registerExtension(pex);
             } else if (stack instanceof FluidStack) {
                 //noinspection unchecked
                 pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) new FluidStack(e.value(), 1000)).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.FLUID.holders());
                 pex.invasiveOpts$setPredicate(pred);
+                FilterCachingHelper.registerExtension(pex);
             }
         }
 
         if (pred != null) {
-            cir.setReturnValue(pred.test(stack));
+            cir.setReturnValue(pred.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
         }
     }
 }

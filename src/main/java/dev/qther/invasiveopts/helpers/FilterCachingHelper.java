@@ -1,42 +1,51 @@
 package dev.qther.invasiveopts.helpers;
 
 import ca.teamdman.sfml.ast.TagMatcher;
+import dev.qther.invasiveopts.InvasiveOpts;
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
+import dev.qther.invasiveopts.extensions.FilterCachingExtension;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.Holder;
+import net.minecraft.util.Unit;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.BitSet;
 import java.util.Objects;
+import java.util.WeakHashMap;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@EventBusSubscriber(modid = InvasiveOpts.MODID)
 public class FilterCachingHelper {
-    private static final Object2ObjectOpenHashMap<Object, Predicate<Object>> PREDICATE_CACHE = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<Object, IntPredicate> PREDICATE_CACHE = new Object2ObjectOpenHashMap<>();
+    private static final WeakHashMap<FilterCachingExtension, Unit> HOLDERS = new WeakHashMap<>();
 
     private static final AlwaysTrue ALWAYS_TRUE = new AlwaysTrue();
     private static final AlwaysFalse ALWAYS_FALSE = new AlwaysFalse();
 
-    private static class AlwaysTrue implements Predicate<Object> {
+    private static class AlwaysTrue implements IntPredicate {
         @Override
-        public boolean test(Object o) {
+        public boolean test(int id) {
             return true;
         }
     }
 
-    private static class AlwaysFalse implements Predicate<Object> {
+    private static class AlwaysFalse implements IntPredicate {
         @Override
-        public boolean test(Object o) {
+        public boolean test(int id) {
             return false;
         }
     }
 
-    private record BitSetMatcher(BitSet bitset, int start) implements Predicate<Object> {
+    private record BitSetMatcher(BitSet bitset, int start) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+        public boolean test(int id) {
             if (id < start) {
                 return false;
             }
@@ -45,10 +54,9 @@ public class FilterCachingHelper {
         }
     }
 
-    private record InvertedBitSetMatcher(BitSet bitset, int start) implements Predicate<Object> {
+    private record InvertedBitSetMatcher(BitSet bitset, int start) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+        public boolean test(int id) {
             if (id < start) {
                 return false;
             }
@@ -57,37 +65,35 @@ public class FilterCachingHelper {
         }
     }
 
-    private record ArrayMatcher(int[] array) implements Predicate<Object> {
+    private record ArrayMatcher(int[] array) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+        public boolean test(int id) {
             return array.length <= 8 ? ArrayUtils.contains(array, id) : IntArrays.binarySearch(array, id) >= 0;
         }
     }
 
-    private record InvertedArrayMatcher(int[] array) implements Predicate<Object> {
+    private record InvertedArrayMatcher(int[] array) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            var id = ((AtomicIdExtension) o).invasiveOpts$getId();
+        public boolean test(int id) {
             return array.length <= 8 ? !ArrayUtils.contains(array, id) : IntArrays.binarySearch(array, id) < 0;
         }
     }
 
-    private record SingleMatcher(int value) implements Predicate<Object> {
+    private record SingleMatcher(int value) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            return ((AtomicIdExtension) o).invasiveOpts$getId() == value;
+        public boolean test(int id) {
+            return id == value;
         }
     }
 
-    private record InvertedSingleMatcher(int value) implements Predicate<Object> {
+    private record InvertedSingleMatcher(int value) implements IntPredicate {
         @Override
-        public boolean test(Object o) {
-            return ((AtomicIdExtension) o).invasiveOpts$getId() != value;
+        public boolean test(int id) {
+            return id != value;
         }
     }
 
-    public static <Ext> Predicate<Object> makePredicate(Object key, Predicate<Holder.Reference<Ext>> entryPredicate, Stream<Holder.Reference<Ext>> registry) {
+    public static <Ext> IntPredicate makePredicate(Object key, Predicate<Holder.Reference<Ext>> entryPredicate, Stream<Holder.Reference<Ext>> registry) {
         return PREDICATE_CACHE.computeIfAbsent(key, ignored -> {
             var trueList = new IntArrayList();
             var falseList = new IntArrayList();
@@ -184,5 +190,26 @@ public class FilterCachingHelper {
         public int hashCode() {
             return Objects.hash(this.inner.namespacePattern, this.inner.pathElementPatterns);
         }
+    }
+
+    public static void registerExtension(FilterCachingExtension extension) {
+        HOLDERS.put(extension, Unit.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void onDatapackSync(OnDatapackSyncEvent event) {
+        if (event.getPlayer() != null) {
+            return;
+        }
+
+        if (HOLDERS.size() < PREDICATE_CACHE.size()) {
+            InvasiveOpts.LOGGER.warn("FilterCachingExtensions under-registered, expected at least {} but only found {}", PREDICATE_CACHE.size(), HOLDERS.size());
+        }
+
+        for (var ext : HOLDERS.keySet()) {
+            ext.invasiveOpts$setPredicate(null);
+        }
+        HOLDERS.clear();
+        PREDICATE_CACHE.clear();
     }
 }

@@ -8,7 +8,7 @@ import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
 @Restriction(
         require = {
@@ -19,15 +19,15 @@ import java.util.function.Predicate;
 @Mixin(ResourceIdentifier.class)
 public class ResourceIdentifierMixin implements FilterCachingExtension {
     @Unique
-    Predicate<Object> invasiveOpts$predicate;
+    IntPredicate invasiveOpts$predicate;
 
     @Override
-    public void invasiveOpts$setPredicate(Predicate<Object> predicate) {
+    public void invasiveOpts$setPredicate(IntPredicate predicate) {
         invasiveOpts$predicate = predicate;
     }
 
     @Override
-    public Predicate<Object> invasiveOpts$getPredicate() {
+    public IntPredicate invasiveOpts$getPredicate() {
         return invasiveOpts$predicate;
     }
 }
