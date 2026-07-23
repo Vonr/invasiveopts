@@ -18,7 +18,7 @@ public class InvasiveOpts {
         var bus = NeoForge.EVENT_BUS;
         var mods = ModList.get();
         if (mods.isLoaded("xycraft_machines") && Config.Keys.XycraftMachines.UNNECESSARY_RESORTING.enabled) {
-            XycraftMachinesEvents.registerAll(bus);
+            bus.register(XycraftMachinesEvents.class);
         }
     }
 }

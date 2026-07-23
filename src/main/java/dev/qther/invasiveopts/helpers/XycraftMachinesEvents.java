@@ -2,7 +2,7 @@ package dev.qther.invasiveopts.helpers;
 
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import tv.soaryn.xycraft.machines.content.recipes.producers.extractor.ExtractorRecipe;
 import tv.soaryn.xycraft.machines.content.registries.MachinesRecipeTypes;
@@ -14,11 +14,12 @@ public class XycraftMachinesEvents {
     public static final ArrayList<RecipeHolder<ExtractorRecipe>> extractorRecipes = new ArrayList<>();
     public static boolean extractorRecipesChanged = false;
 
-    public static void registerAll(IEventBus bus) {
-        bus.addListener(XycraftMachinesEvents::resortExtractorRecipes);
-    }
-
+    @SubscribeEvent
     public static void resortExtractorRecipes(OnDatapackSyncEvent event) {
+        if (!extractorRecipes.isEmpty() && event.getPlayer() != null) {
+            return;
+        }
+
         extractorRecipes.clear();
         extractorRecipes.addAll(event.getPlayerList().getServer().getRecipeManager().getAllRecipesFor((RecipeType) MachinesRecipeTypes.Extractor.type().get()));
         extractorRecipes.sort(
