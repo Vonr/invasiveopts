@@ -1,6 +1,5 @@
 package dev.qther.invasiveopts.helpers;
 
-import ca.teamdman.sfml.ast.TagMatcher;
 import dev.qther.invasiveopts.InvasiveOpts;
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import dev.qther.invasiveopts.extensions.FilterCachingExtension;
@@ -15,7 +14,6 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.BitSet;
-import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -165,31 +163,6 @@ public class FilterCachingHelper {
                 return new InvertedBitSetMatcher(bitset, start);
             }
         });
-    }
-
-    public static class SFMTagMatcherWrapper {
-        public TagMatcher inner;
-
-        public SFMTagMatcherWrapper(TagMatcher inner) {
-            this.inner = inner;
-        }
-
-        @SuppressWarnings("SlowListContainsAll")
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            } else if (o instanceof SFMTagMatcherWrapper that) {
-                return Objects.equals(this.inner.namespacePattern, that.inner.namespacePattern) && this.inner.pathElementPatterns.containsAll(that.inner.pathElementPatterns) && that.inner.pathElementPatterns.containsAll(this.inner.pathElementPatterns);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.inner.namespacePattern, this.inner.pathElementPatterns);
-        }
     }
 
     public static void registerExtension(FilterCachingExtension extension) {
