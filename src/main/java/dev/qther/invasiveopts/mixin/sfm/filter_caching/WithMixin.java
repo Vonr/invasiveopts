@@ -1,9 +1,8 @@
 package dev.qther.invasiveopts.mixin.sfm.filter_caching;
 
 import ca.teamdman.sfm.common.resourcetype.ResourceType;
-import ca.teamdman.sfml.ast.TagMatcher;
+import ca.teamdman.sfml.ast.With;
 import ca.teamdman.sfml.ast.WithClause;
-import ca.teamdman.sfml.ast.WithTag;
 import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.extensions.AtomicIdExtension;
 import dev.qther.invasiveopts.extensions.FilterCachingExtension;
@@ -16,11 +15,12 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
+import java.util.function.IntPredicate;
 
 @Restriction(
         require = {
@@ -28,34 +28,46 @@ import java.util.Objects;
                 @Condition(type = Condition.Type.TESTER, tester = MixinTesters.SFM.FilterCaching.class)
         }
 )
-@Mixin(WithTag.class)
-public abstract class WithTagMixin implements WithClause {
+@Mixin(With.class)
+public abstract class WithMixin implements FilterCachingExtension {
     @Shadow
     @Final
-    private TagMatcher tagMatcher;
+    private WithClause condition;
+
+    @Shadow
+    @Final
+    private With.WithMode mode;
+
+    @Unique
+    IntPredicate invasiveOpts$predicate;
 
     @Inject(method = "matchesStack", at = @At("HEAD"), cancellable = true)
     private <STACK> void matchesStack(ResourceType<STACK, ?, ?> resourceType, STACK stack, CallbackInfoReturnable<Boolean> cir) {
-        Objects.requireNonNull(this.tagMatcher);
-
-        var pex = (FilterCachingExtension) this.tagMatcher;
-        var pred = pex.invasiveOpts$getPredicate();
-        if (pred == null) {
+        if (invasiveOpts$predicate == null) {
+            var whitelist = this.mode == With.WithMode.WITH;
             if (stack instanceof ItemStack) {
                 //noinspection unchecked
-                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) e.value().getDefaultInstance()).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.ITEM.holders());
-                pex.invasiveOpts$setPredicate(pred);
-                FilterCachingHelper.registerExtension(pex);
+                invasiveOpts$predicate = FilterCachingHelper.makePredicate(this, e -> this.condition.matchesStack(resourceType, (STACK) e.value().getDefaultInstance()) == whitelist, BuiltInRegistries.ITEM.holders());
+                FilterCachingHelper.registerExtension(this);
             } else if (stack instanceof FluidStack) {
                 //noinspection unchecked
-                pred = FilterCachingHelper.makePredicate(new FilterCachingHelper.SFMTagMatcherWrapper(this.tagMatcher), e -> resourceType.getTagsForStack((STACK) new FluidStack(e.value(), 1000)).anyMatch(this.tagMatcher::testResourceLocation), BuiltInRegistries.FLUID.holders());
-                pex.invasiveOpts$setPredicate(pred);
-                FilterCachingHelper.registerExtension(pex);
+                invasiveOpts$predicate = FilterCachingHelper.makePredicate(this, e -> this.condition.matchesStack(resourceType, (STACK) new FluidStack(e.value(), 1000)) == whitelist, BuiltInRegistries.FLUID.holders());
+                FilterCachingHelper.registerExtension(this);
             }
         }
 
-        if (pred != null) {
-            cir.setReturnValue(pred.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
+        if (invasiveOpts$predicate != null) {
+            cir.setReturnValue(invasiveOpts$predicate.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
         }
+    }
+
+    @Override
+    public void invasiveOpts$setPredicate(IntPredicate predicate) {
+        invasiveOpts$predicate = predicate;
+    }
+
+    @Override
+    public IntPredicate invasiveOpts$getPredicate() {
+        return invasiveOpts$predicate;
     }
 }
