@@ -50,7 +50,7 @@ public class FilterCachingHelper {
                 return false;
             }
 
-            return bitset.get(id);
+            return bitset.get(id - start);
         }
     }
 
@@ -61,7 +61,7 @@ public class FilterCachingHelper {
                 return false;
             }
 
-            return !bitset.get(id);
+            return !bitset.get(id - start);
         }
     }
 
@@ -151,7 +151,7 @@ public class FilterCachingHelper {
 
                 return new BitSetMatcher(bitset, start);
             } else {
-                if (falsesSpan > trues.length * Integer.SIZE) {
+                if (falsesSpan > falses.length * Integer.SIZE) {
                     // Sparse
                     return new InvertedArrayMatcher(falses);
                 }
