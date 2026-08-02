@@ -4,11 +4,14 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.maxhenkel.pipez.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
+import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
+import de.maxhenkel.pipez.utils.ComponentUtils;
 import dev.qther.invasiveopts.MixinTesters;
 import dev.qther.invasiveopts.extensions.PipezFilterExtension;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,17 +25,31 @@ import java.util.Objects;
         }
 )
 @Mixin(ItemPipeType.class)
-public class ItemPipeTypeMixin {
+public abstract class ItemPipeTypeMixin extends PipeType {
     @WrapMethod(method = "matches")
     private boolean matches(HolderLookup.Provider provider, Filter<?, Item> filter, ItemStack stack, Operation<Boolean> original) {
         var tag = filter.getTag();
-        if (filter.getMetadata() == null) {
+        CompoundTag metadata = filter.getMetadata();
+        if (metadata == null) {
             return tag == null || tag.contains(stack.getItem());
         }
             
         var patch = ((PipezFilterExtension) filter).invasiveopts$getComponentsPatch();
         if (patch == null) {
-            return false;
+            CompoundTag stackNBT = ComponentUtils.getTag(provider, stack);
+            if (filter.isExactMetadata()) {
+                if (!this.deepExactCompare(metadata, stackNBT)) {
+                    return false;
+                } else {
+                    return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+                }
+            } else if (stackNBT.isEmpty()) {
+                return metadata.size() <= 0;
+            } else if (!this.deepFuzzyCompare(metadata, stackNBT)) {
+                return false;
+            } else {
+                return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            }
         }
 
         if (tag != null && !tag.contains(stack.getItem())) {
