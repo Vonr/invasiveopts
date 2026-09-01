@@ -25,7 +25,7 @@ public abstract class PipeTypeMixin<T, D extends AbstractPipeTypeData<T>> {
     @Inject(method = "deepExactCompare", at = @At("HEAD"), cancellable = true)
     public void earlyExitCompoundComparison(Tag meta, Tag item, CallbackInfoReturnable<Boolean> cir) {
         if (meta instanceof CompoundTag a && item instanceof CompoundTag b) {
-            if (a.isEmpty()) {
+            if (a.isEmpty() && b.isEmpty()) {
                 cir.setReturnValue(true);
                 return;
             }
@@ -37,7 +37,7 @@ public abstract class PipeTypeMixin<T, D extends AbstractPipeTypeData<T>> {
         }
 
         if (meta instanceof ListTag a && item instanceof ListTag b) {
-            if (a.isEmpty()) {
+            if (a.isEmpty() && b.isEmpty()) {
                 cir.setReturnValue(true);
                 return;
             }
