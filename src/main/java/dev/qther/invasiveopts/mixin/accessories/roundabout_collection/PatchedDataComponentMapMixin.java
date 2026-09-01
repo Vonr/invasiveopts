@@ -1,7 +1,6 @@
 package dev.qther.invasiveopts.mixin.accessories.roundabout_collection;
 
 import dev.qther.invasiveopts.MixinTesters;
-import dev.qther.invasiveopts.mixin.DataComponentPatchAccessor;
 import dev.qther.invasiveopts.mixin.accessories.EventStreamAccessor;
 import io.wispforest.accessories.pond.stack.PatchedDataComponentMapExtension;
 import io.wispforest.accessories.utils.ItemStackMutation;
@@ -103,7 +102,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
         this.invasiveOpts$accessories$roundabout_collection$inApplyPatchLock = false;
 
         if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
-            var changedDataTypes = List.copyOf(((DataComponentPatchAccessor) (Object) patch).getMap().keySet());
+            var changedDataTypes = List.copyOf(patch.map.keySet());
 
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(changedDataTypes);
         }
@@ -123,7 +122,7 @@ public abstract class PatchedDataComponentMapMixin implements PatchedDataCompone
         this.invasiveOpts$accessories$roundabout_collection$changeCheckStack = true;
 
         if (this.invasiveOpts$accessories$roundabout_collection$shouldBother()) {
-            var changedDataTypes = List.copyOf(((DataComponentPatchAccessor) (Object) patch).getMap().keySet());
+            var changedDataTypes = List.copyOf(patch.map.keySet());
             this.invasiveOpts$accessories$roundabout_collection$handleMutationEvent(changedDataTypes);
         }
     }

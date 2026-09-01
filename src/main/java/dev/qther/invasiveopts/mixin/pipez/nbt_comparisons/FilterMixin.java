@@ -29,7 +29,7 @@ import java.util.UUID;
         }
 )
 @Mixin(Filter.class)
-public class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtension {
+public abstract class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtension {
     @Unique
     private boolean invasiveOpts$cached;
     @Unique
@@ -38,6 +38,9 @@ public class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtens
     @Shadow
     @Nullable
     protected CompoundTag metadata;
+
+    @Shadow
+    public abstract boolean isExactMetadata();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void initCache(UUID id, Tag<T> tag, CompoundTag metadata, boolean exactMetadata, DirectionalPosition destination, boolean invert, CallbackInfo ci) {
@@ -56,6 +59,10 @@ public class FilterMixin<F extends Filter<F, T>, T> implements PipezFilterExtens
 
     @Override
     public DataComponentPatch invasiveopts$getComponentsPatch() {
+        if (!this.isExactMetadata()) {
+            return null;
+        }
+
         if (invasiveOpts$cached) {
             return invasiveOpts$metadataPatch;
         }
