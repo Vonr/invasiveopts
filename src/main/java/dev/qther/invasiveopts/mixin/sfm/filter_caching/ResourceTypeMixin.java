@@ -26,6 +26,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ResourceTypeMixin<STACK, ITEM, CAP> {
     @Inject(method = "matchesStack", at = @At(value = "INVOKE", target = "Lca/teamdman/sfm/common/resourcetype/ResourceType;getRegistryKeyForStack(Ljava/lang/Object;)Lnet/minecraft/resources/ResourceLocation;"), cancellable = true)
     private void cacheResourceLocation(ResourceIdentifier<STACK, ITEM, CAP> resourceId, Object stack, CallbackInfoReturnable<Boolean> cir) {
+        if (!(stack instanceof AtomicIdExtension ext)) {
+            return;
+        }
+
         var pex = (FilterCachingExtension) resourceId;
         var pred = pex.invasiveOpts$getPredicate();
         if (pred == null) {
@@ -41,7 +45,7 @@ public abstract class ResourceTypeMixin<STACK, ITEM, CAP> {
         }
 
         if (pred != null) {
-            cir.setReturnValue(pred.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
+            cir.setReturnValue(pred.test(ext.invasiveOpts$getId()));
         }
     }
 }

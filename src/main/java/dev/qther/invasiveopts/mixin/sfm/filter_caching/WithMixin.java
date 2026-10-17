@@ -43,6 +43,10 @@ public abstract class WithMixin implements FilterCachingExtension {
 
     @Inject(method = "matchesStack", at = @At("HEAD"), cancellable = true)
     private <STACK> void matchesStack(ResourceType<STACK, ?, ?> resourceType, STACK stack, CallbackInfoReturnable<Boolean> cir) {
+        if (!(stack instanceof AtomicIdExtension ext)) {
+            return;
+        }
+
         if (invasiveOpts$predicate == null) {
             var whitelist = this.mode == With.WithMode.WITH;
             if (stack instanceof ItemStack) {
@@ -57,7 +61,7 @@ public abstract class WithMixin implements FilterCachingExtension {
         }
 
         if (invasiveOpts$predicate != null) {
-            cir.setReturnValue(invasiveOpts$predicate.test(((AtomicIdExtension) stack).invasiveOpts$getId()));
+            cir.setReturnValue(invasiveOpts$predicate.test(ext.invasiveOpts$getId()));
         }
     }
 
