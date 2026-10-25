@@ -1,4 +1,4 @@
-package dev.qther.invasiveopts.mixin.oritech;
+package dev.qther.invasiveopts.mixin.oritech.recipe_caching;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
