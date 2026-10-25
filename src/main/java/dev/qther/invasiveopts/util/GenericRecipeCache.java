@@ -15,31 +15,58 @@ import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 
 public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
-    public static final GenericRecipeCache<SmeltingRecipe, SingleRecipeInput> SMELTING_CACHE = new GenericRecipeCache<>(RecipeType.SMELTING, 16);
-    public static final GenericRecipeCache<BlastingRecipe, SingleRecipeInput> BLASTING_CACHE = new GenericRecipeCache<>(RecipeType.BLASTING, 16);
-    public static final GenericRecipeCache<SmokingRecipe, SingleRecipeInput> SMOKING_CACHE = new GenericRecipeCache<>(RecipeType.SMOKING, 16);
+    public static final GenericRecipeCache<SmeltingRecipe, SingleRecipeInput> SMELTING_CACHE = new GenericRecipeCache<>(RecipeType.SMELTING, 8);
+    public static final GenericRecipeCache<BlastingRecipe, SingleRecipeInput> BLASTING_CACHE = new GenericRecipeCache<>(RecipeType.BLASTING, 8);
+    public static final GenericRecipeCache<SmokingRecipe, SingleRecipeInput> SMOKING_CACHE = new GenericRecipeCache<>(RecipeType.SMOKING, 8);
 
     public final RecipeType<R> recipeType;
-    protected final ArrayDeque<RecipeHolder<? extends Recipe<I>>> cache;
-    protected final int size;
+    protected ArrayDeque<RecipeHolder<? extends Recipe<I>>> cache;
+    protected int size;
+
+    protected int ticksAboveSize = 0;
+    protected int additionsThisTick = 0;
 
     public GenericRecipeCache(RecipeType<R> recipeType, int size) {
         this.recipeType = recipeType;
         this.size = size;
         this.cache = new ArrayDeque<>(this.size);
         NeoForge.EVENT_BUS.addListener(this::onDatapackReload);
+        NeoForge.EVENT_BUS.addListener(this::onServerTick);
     }
 
     protected void onDatapackReload(OnDatapackSyncEvent event) {
         if (event.getPlayer() == null) {
             this.clear();
         }
+    }
+
+    protected void onServerTick(ServerTickEvent.Post event) {
+        if (this.additionsThisTick > this.size) {
+            this.ticksAboveSize++;
+            if (this.ticksAboveSize > 20) {
+                var highestBit = Integer.highestOneBit(this.additionsThisTick);
+                if (this.additionsThisTick == highestBit) {
+                    this.size = this.additionsThisTick;
+                } else {
+                    this.size = highestBit << 1;
+                }
+
+                ArrayDeque<RecipeHolder<? extends Recipe<I>>> newCache = new ArrayDeque<>(this.size);
+                newCache.addAll(this.cache);
+                this.cache = newCache;
+            }
+        } else {
+            this.ticksAboveSize = 0;
+        }
+
+        this.additionsThisTick = 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -75,6 +102,7 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
             this.cache.removeFirst();
         }
         this.cache.add(holder);
+        additionsThisTick++;
     }
 
     public void clear() {
