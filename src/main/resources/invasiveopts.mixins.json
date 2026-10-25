@@ -19,6 +19,7 @@
     "create.fail_fast_clipboard_migration.ItemStackMixin",
     "mekanism.ChemicalMixin",
     "mekanism.ChemicalStackMixin",
+    "oritech.PoweredFurnaceBlockEntityMixin",
     "pipez.constant_fullness_checks.FluidPipeTypeMixin",
     "pipez.constant_fullness_checks.GasPipeTypeMixin",
     "pipez.constant_fullness_checks.ItemPipeTypeMixin",

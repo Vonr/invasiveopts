@@ -107,3 +107,13 @@ side="BOTH"
 [dependencies."${mod_id}".mc-publish]
 modrinth = "ae2"
 curseforge = "applied-energistics-2"
+
+[[dependencies."${mod_id}"]]
+modId="oritech"
+type="optional"
+versionRange="${oritech_version_range}"
+ordering="AFTER"
+side="BOTH"
+[dependencies."${mod_id}".mc-publish]
+modrinth = "oritech"
+curseforge = "oritech"

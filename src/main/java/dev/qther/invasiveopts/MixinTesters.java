@@ -123,4 +123,13 @@ public class MixinTesters {
             }
         }
     }
+
+    public static class Oritech {
+        public static class RecipeCaching implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Oritech.RECIPE_CACHING.enabled;
+            }
+        }
+    }
 }

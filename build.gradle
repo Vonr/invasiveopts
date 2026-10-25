@@ -50,6 +50,22 @@ repositories {
         }
     }
 
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup "software.bernie.geckolib"
+        }
+    }
+
+    maven {
+        name = "Fuzs Mod Resources"
+        url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
+        content {
+            includeGroup "fuzs.forgeconfigapiport"
+        }
+    }
+
     maven { url 'https://modmaven.dev/' }
 
     maven { url 'https://maven.fallenbreath.me/releases' }
@@ -67,6 +83,8 @@ repositories {
     maven { url "https://maven.fabricmc.net" }
 
     maven { url "https://maven.shedaniel.me/" }
+
+    maven { url "https://maven.teamresourceful.com/repository/maven-public/" }
 
     mavenLocal()
 }
@@ -167,6 +185,9 @@ dependencies {
     implementation("dev.shadowsoffire:Placebo:1.21.1-${project.placebo_version}")
 
     implementation("curse.maven:super-factory-manager-306935:${project.sfm_version}")
+
+    implementation("rearth.oritech:oritech-common-1.21.1:${project.oritech_version}")
+    implementation("rearth.oritech:oritech-neoforge-1.21.1:${project.oritech_version}")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

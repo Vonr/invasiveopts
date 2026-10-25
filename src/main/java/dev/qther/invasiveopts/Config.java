@@ -63,6 +63,10 @@ public class Config {
             public static final Key FILTER_CACHING = key("sfm.filter_caching", false);
         }
 
+        public static class Oritech {
+            public static final Key RECIPE_CACHING = key("oritech.recipe_caching");
+        }
+
         private static Key key(String id, boolean enabled) {
             var key = new Key(id, enabled);
             keysById.put(id, key);
