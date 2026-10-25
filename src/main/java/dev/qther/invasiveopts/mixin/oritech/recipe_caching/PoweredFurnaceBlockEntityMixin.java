@@ -12,10 +12,8 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import rearth.oritech.block.entity.processing.PoweredFurnaceBlockEntity;
 
@@ -29,9 +27,6 @@ import java.util.Optional;
 )
 @Mixin(PoweredFurnaceBlockEntity.class)
 public abstract class PoweredFurnaceBlockEntityMixin {
-    @Unique
-    private static final GenericRecipeCache<SmeltingRecipe, SingleRecipeInput> invasiveOpts$SMELTING_CACHE = new GenericRecipeCache<>(RecipeType.SMELTING, 8);
-
     @WrapOperation(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeManager;getRecipeFor(Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/item/crafting/RecipeInput;Lnet/minecraft/world/level/Level;)Ljava/util/Optional;"))
     private <T extends Recipe<I>, I extends RecipeInput> Optional<RecipeHolder<T>> useCache(RecipeManager instance, RecipeType<T> p_44016_, I p_345492_, Level p_44018_, Operation<Optional<RecipeHolder<T>>> original) {
         if (p_44016_ != RecipeType.SMELTING || !(p_345492_ instanceof SingleRecipeInput sir)) {
@@ -43,6 +38,6 @@ public abstract class PoweredFurnaceBlockEntityMixin {
         }
 
         //noinspection unchecked
-        return Optional.ofNullable((RecipeHolder<T>) invasiveOpts$SMELTING_CACHE.get(p_44018_, sir));
+        return Optional.ofNullable((RecipeHolder<T>) GenericRecipeCache.SMELTING_CACHE.get(p_44018_, sir));
     }
 }
