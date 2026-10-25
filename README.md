@@ -14,6 +14,7 @@ Optimizations included in this mod fall under one of the following categories:
 4. Patch already applied but not available in released versions.
 5. Patch is experimental or of dubious usefulness (these are disabled by default)
 6. Targeted mod is no longer maintained or is "fix-only" for that Minecraft version.
+7. Patch determined to be too burdensome for upstream to maintain.
 
 Current optimizations:
 
@@ -25,6 +26,7 @@ Current optimizations:
   - `botanypots.hopper_insertions` (1): Hopper Botany Pot exponential insertion backoff and emptiness tracking [(PR)](https://github.com/Darkhax-Minecraft/BotanyPots/pull/499)
 - Create
   - `create.fail_fast_clipboard_migration` (4): Fails fast when attempting clipboard migration in `ItemStack.<init>`, reducing impact to this extremely common operation. [(PR)](https://github.com/Creators-of-Create/Create/pull/10390)
+  - `create.recipe_caching` (7): Caches recipes for various processes in the mod.
 - Pastel
   - `pastel.nuke_item_predicate_mixin` (4): Nukes Pastel's ItemPredicateMixin as it is unnecessary and expensive
 - Pipez (Also see [Pipez Lag Fix by AlmanaX21](https://www.curseforge.com/minecraft/mc-mods/pipez-lag-fix) for exponential backoff)
