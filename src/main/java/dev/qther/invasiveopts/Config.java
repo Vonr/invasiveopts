@@ -44,6 +44,7 @@ public class Config {
 
         public static class Create {
             public static final Key FAIL_FAST_CLIPBOARD_MIGRATION = key("create.fail_fast_clipboard_migration");
+            public static final Key RECIPE_CACHING = key("create.recipe_caching");
         }
 
         public static class Accessories {

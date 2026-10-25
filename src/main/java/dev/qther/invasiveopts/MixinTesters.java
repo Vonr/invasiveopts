@@ -79,6 +79,13 @@ public class MixinTesters {
                 return Config.Keys.Create.FAIL_FAST_CLIPBOARD_MIGRATION.enabled;
             }
         }
+
+        public static class RecipeCaching implements ConditionTester {
+            @Override
+            public boolean isSatisfied(String mixinClassName) {
+                return Config.Keys.Create.RECIPE_CACHING.enabled;
+            }
+        }
     }
 
     public static class Accessories {
