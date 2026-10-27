@@ -1,5 +1,6 @@
 package dev.qther.invasiveopts.util;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -16,22 +17,23 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayDeque;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
     public static final GenericRecipeCache<SmeltingRecipe, SingleRecipeInput> SMELTING_CACHE = new GenericRecipeCache<>(RecipeType.SMELTING, 8);
     public static final GenericRecipeCache<BlastingRecipe, SingleRecipeInput> BLASTING_CACHE = new GenericRecipeCache<>(RecipeType.BLASTING, 8);
     public static final GenericRecipeCache<SmokingRecipe, SingleRecipeInput> SMOKING_CACHE = new GenericRecipeCache<>(RecipeType.SMOKING, 8);
-
     public final RecipeType<R> recipeType;
     protected ArrayDeque<RecipeHolder<? extends Recipe<I>>> cache;
     protected int size;
 
     protected int ticksAboveSize = 0b0000_0000_0000_0000_0000_0000_0000_0000;
-    protected int additionsThisTick = 0;
+    protected boolean addedThisTick = false;
 
     public GenericRecipeCache(RecipeType<R> recipeType, int size) {
         this.recipeType = recipeType;
@@ -48,15 +50,11 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
     }
 
     protected void onServerTick(ServerTickEvent.Post event) {
-        if (this.additionsThisTick > this.size) {
+        if (this.addedThisTick) {
             this.ticksAboveSize = (this.ticksAboveSize << 1) + 1;
             if (Integer.bitCount(this.ticksAboveSize) >= 16) {
-                var highestBit = Integer.highestOneBit(this.additionsThisTick);
-                if (this.additionsThisTick == highestBit) {
-                    this.size = this.additionsThisTick;
-                } else {
-                    this.size = highestBit << 1;
-                }
+                var highestBit = Integer.highestOneBit(this.size);
+                this.size = highestBit << 1;
 
                 ArrayDeque<RecipeHolder<? extends Recipe<I>>> newCache = new ArrayDeque<>(this.size);
                 newCache.addAll(this.cache);
@@ -66,7 +64,7 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
             this.ticksAboveSize <<= 1;
         }
 
-        this.additionsThisTick = 0;
+        this.addedThisTick = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -102,7 +100,7 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
             this.cache.removeFirst();
         }
         this.cache.add(holder);
-        additionsThisTick++;
+        this.addedThisTick = true;
     }
 
     public void clear() {
@@ -121,7 +119,7 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
         }
 
         @Override
-        public @NotNull ItemStack assemble(@NotNull I input, HolderLookup.@NotNull Provider registries) {
+        public ItemStack assemble(I input, HolderLookup.Provider registries) {
             return ItemStack.EMPTY;
         }
 
@@ -131,17 +129,17 @@ public class GenericRecipeCache<R extends Recipe<I>, I extends RecipeInput> {
         }
 
         @Override
-        public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
+        public ItemStack getResultItem(HolderLookup.Provider registries) {
             return ItemStack.EMPTY;
         }
 
         @Override
-        public @NotNull RecipeSerializer<?> getSerializer() {
+        public RecipeSerializer<?> getSerializer() {
             return RecipeSerializer.SHAPELESS_RECIPE;
         }
 
         @Override
-        public @NotNull RecipeType<?> getType() {
+        public RecipeType<?> getType() {
             return RecipeType.CRAFTING;
         }
     }
