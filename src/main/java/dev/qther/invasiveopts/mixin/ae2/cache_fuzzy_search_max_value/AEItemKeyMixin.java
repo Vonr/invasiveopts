@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // https://github.com/AppliedEnergistics/Applied-Energistics-2/pull/8891
 @Restriction(
         require = {
-                @Condition(value = "ae2", versionPredicates = "<=19.2.14"),
+                @Condition(value = "ae2", versionPredicates = "<19.2.19"),
                 @Condition(type = Condition.Type.TESTER, tester = MixinTesters.AE2.CacheFuzzySearchMaxValue.class)
         }
 )
